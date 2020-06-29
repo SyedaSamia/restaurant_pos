@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:restaurantpos/cart_item.dart';
-import 'package:restaurantpos/dummy_data.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/providers/checkout_provider.dart';
+import 'package:restaurantpos/widgets/cart_item.dart';
 import 'package:restaurantpos/widgets/main_drawer.dart';
+
+import 'menu_checkout.dart';
 
 class Cart extends StatelessWidget {
   static const routeName = '/cart';
-  final totalItem = 6;
-  //final double totalBill = (itemPrice * itemQuantity);
-  final totalCost = 10000;
-  /*final routeArgs = ModalRoute.of(context).settings.arguments as String;
-  final menuTitle = routeArgs['title'];
-*/
+
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context);
     final _floatingActionButton = FloatingActionButton.extended(
       label: Text(
-        '${totalItem} item/items = ${totalCost}',
+        'Checkout',
         style: TextStyle(
           color: Colors.white,
         ),
@@ -24,7 +24,16 @@ class Cart extends StatelessWidget {
         Icons.arrow_forward_ios,
         color: Colors.white,
       ),
-      onPressed: () {},
+      onPressed: () {
+        {
+          Provider.of<CheckoutProvider>(context, listen: false)
+              .addCheckoutOrder(cart.items.values.toList(), cart.totalAmount);
+          Navigator.of(context).pushNamed(
+            Checkout.routeName,
+          );
+          cart.clear();
+        }
+      },
       backgroundColor: Theme.of(context).primaryColor,
     );
 
@@ -33,17 +42,58 @@ class Cart extends StatelessWidget {
           title: Text('Cart'),
         ),
         drawer: MainDrawer(),
-        body: GridView(
-          padding: EdgeInsets.all(20),
-          children: DUMMY_CART
-              .map((e) =>
-                  CartItem(e.id, e.itemName, e.itemPrice, e.itemQuantity))
-              .toList(),
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 100,
-              childAspectRatio: 5 / 5,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10),
+        body: Column(
+          children: <Widget>[
+            Card(
+              margin: EdgeInsets.all(25),
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'Total',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Spacer(),
+                    Chip(
+                      label: Text(
+                        '\$${cart.totalAmount.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          color: Theme.of(context).primaryTextTheme.title.color,
+                        ),
+                      ),
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
+                    /*  FlatButton(
+                      child: Text('ORDER NOW'),
+                      onPressed: () {
+                        Provider.of<Orders>(context, listen: false).addOrder(
+                          cart.items.values.toList(),
+                          cart.totalAmount,
+                        );
+                        cart.clear();
+                      },
+                      textColor: Theme.of(context).primaryColor,
+                    )*/
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                itemCount: cart.items.length,
+                itemBuilder: (ctx, i) => CartItem(
+                  cart.items.values.toList()[i].id,
+                  cart.items.keys.toList()[i],
+                  cart.items.values.toList()[i].price,
+                  cart.items.values.toList()[i].quantity,
+                  cart.items.values.toList()[i].title,
+                ),
+              ),
+            ),
+          ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: _floatingActionButton
@@ -52,16 +102,3 @@ class Cart extends StatelessWidget {
         );
   }
 }
-
-/*
-GridView.builder(
-gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-crossAxisCount: 2,
-childAspectRatio: MediaQuery.of(context).size.width /
-(MediaQuery.of(context).size.height / 4),
-),
-itemCount: DUMMY_CART.length,
-itemBuilder: (context, index) {
-return GridTile(child: Text(items[index]));
-},
-),*/

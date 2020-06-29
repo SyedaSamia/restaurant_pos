@@ -1,33 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurantpos/cart_item.dart';
-import 'package:restaurantpos/dummy_data.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/items_provider.dart';
+import 'package:restaurantpos/widgets/item.dart';
 
-class ItemScreen extends StatelessWidget {
+class ItemScreen extends StatefulWidget {
+  @override
+  _ItemScreenState createState() => _ItemScreenState();
+}
+
+class _ItemScreenState extends State<ItemScreen> {
   @override
   Widget build(BuildContext context) {
+    final itemsData = Provider.of<ItemsProvider>(context);
+    final items = itemsData.items;
     return Container(
+      padding: EdgeInsets.only(top: 15),
       child: ListView.separated(
-        padding: const EdgeInsets.all(20),
-        itemCount: DUMMY_CART.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(DUMMY_CART[index].itemName),
-                Text(DUMMY_CART[index].itemPrice.toString()),
-              ],
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.shopping_cart),
-              onPressed: () {},
-            ),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
+        itemCount: items.length,
+        itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
+          value: items[i],
+          child: Item(),
+        ),
+        separatorBuilder: (context, index) => Divider(),
       ),
     );
   }
