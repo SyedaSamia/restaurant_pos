@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/items_provider.dart';
@@ -18,9 +19,11 @@ class UserItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(title),
-      /* leading: CircleAvatar(
+      */
+/* leading: CircleAvatar(
         backgroundImage: NetworkImage(imageUrl),
-      ),*/
+      ),*/ /*
+
       trailing: Container(
         width: 100,
         child: Row(
@@ -47,3 +50,4 @@ class UserItem extends StatelessWidget {
     );
   }
 }
+*/

@@ -1,49 +1,265 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurantpos/models/http_exception.dart';
+import 'package:restaurantpos/providers/auth.dart';
 import 'home.page.dart';
+
+enum AuthMode { Signup, Login }
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
+  const LoginPage({
+    Key key,
+  }) : super(key: key);
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  AuthMode _authMode = AuthMode.Login;
+  Map<String, String> _authData = {
+    'email': '',
+    'password': '',
+  };
+  var _isLoading = false;
+  final _passwordController = TextEditingController();
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState.validate()) {
+      // Invalid!
+      return;
+    }
+    _formKey.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      if (_authMode == AuthMode.Login) {
+        // Log user in
+        await Provider.of<Auth>(context, listen: false).login(
+          _authData['email'],
+          _authData['password'],
+        );
+      } else {
+        // Sign user up
+        await Provider.of<Auth>(context, listen: false).signup(
+          _authData['email'],
+          _authData['password'],
+        );
+      }
+    } on HttpException catch (error) {
+      var errorMessage = 'Authentication failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'This is not a valid email address';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is too weak.';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find a user with that email.';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid password.';
+      }
+      _showErrorDialog(errorMessage);
+    } catch (error) {
+      const errorMessage =
+          'Could not authenticate you. Please try again later.';
+      _showErrorDialog(errorMessage);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _switchAuthMode() {
+    if (_authMode == AuthMode.Login) {
+      setState(() {
+        _authMode = AuthMode.Signup;
+      });
+    } else {
+      setState(() {
+        _authMode = AuthMode.Login;
+      });
+    }
+  }
+
+  final _back = Colors.blue;
+  final _front = Colors.white;
+
+  /*final _back = Colors.white;
+  final _front = Colors.blue;*/
+
+  InputDecoration _buildInputDecoration(String hint) {
+    return InputDecoration(
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: _back)),
+        hintText: hint,
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: _back)),
+        hintStyle: TextStyle(color: _back),
+        errorStyle: TextStyle(color: _back),
+        errorBorder: UnderlineInputBorder(borderSide: BorderSide(color: _back)),
+        focusedErrorBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: _back)));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
-        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 100),
-        constraints: BoxConstraints(
-          maxHeight: 700,
-          maxWidth: 400,
-          minHeight: 100,
-          minWidth: 100,
-        ),
-        alignment: Alignment.center,
-        color: Colors.amber,
-        padding: EdgeInsets.all(20.0),
+        color: _back,
+        //    padding: EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Login',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            Padding(
+              padding: const EdgeInsets.only(top: 150, bottom: 20),
+              child: Text(
+                'Point of Sale App',
+                style: TextStyle(
+                    fontSize: 30, fontWeight: FontWeight.bold, color: _front),
+              ),
             ),
-            TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(labelText: "Email Address")),
-            TextFormField(
-                obscureText: true,
-                decoration: InputDecoration(labelText: "Password")),
-            RaisedButton(
-                child: Text("LOGIN"),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => HomePage()));
-                }),
+            Container(
+              //   margin: EdgeInsets.only(top: 200, bottom: 100),
+              width: double.infinity,
+              // padding: EdgeInsets.all(10),
+              constraints: BoxConstraints(
+                  minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 8.0,
+                color: _front,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10, left: 10, right: 10),
+                  child: Form(
+                    key: _formKey,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          TextFormField(
+                            cursorColor: _back,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: _buildInputDecoration('Email'),
+                            validator: (value) {
+                              if (value.isEmpty || !value.contains('@')) {
+                                return 'Invalid email!';
+                              }
+                            },
+                            onSaved: (value) {
+                              _authData['email'] = value;
+                            },
+                          ),
+                          TextFormField(
+                            obscureText: true,
+                            decoration: _buildInputDecoration('Password'),
+                            controller: _passwordController,
+                            validator: (value) {
+                              if (value.isEmpty || value.length < 5) {
+                                return 'Password is too short!';
+                              }
+                            },
+                            onSaved: (value) {
+                              _authData['password'] = value;
+                            },
+                          ),
+                          if (_authMode == AuthMode.Signup)
+                            TextFormField(
+                              enabled: _authMode == AuthMode.Signup,
+                              decoration:
+                                  _buildInputDecoration('Confirm Password'),
+                              obscureText: true,
+                              validator: _authMode == AuthMode.Signup
+                                  ? (value) {
+                                      if (value != _passwordController.text) {
+                                        return 'Passwords do not match!';
+                                      }
+                                    }
+                                  : null,
+                            ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          if (_isLoading)
+                            CircularProgressIndicator()
+                          else
+                            RaisedButton(
+                              color: _back,
+                              child: Text(_authMode == AuthMode.Login
+                                  ? 'LOGIN'
+                                  : 'SIGN UP'),
+                              onPressed: _submit,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30.0, vertical: 8.0),
+                              textColor: _front,
+                            ),
+                          FlatButton(
+                            child: Text(
+                              '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD',
+                              style: TextStyle(color: _back),
+                            ),
+                            onPressed: _switchAuthMode,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30.0, vertical: 4),
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            textColor: _front,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          color: _back,
+          height: 50,
+          width: double.infinity,
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Text("Powered by CodePura Pvt Ltd.",
+                style: TextStyle(
+                  //  fontFamily: 'SourceSansPro',
+                  //color: Color(0xff606060),
+                  color: Colors.white70,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w400,
+                  // fontStyle: FontStyle.normal,
+                )),
+          ),
         ),
       ),
     );

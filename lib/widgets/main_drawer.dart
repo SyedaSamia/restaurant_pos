@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/auth.dart';
 import 'package:restaurantpos/screens/home.page.dart';
 import 'package:restaurantpos/screens/menu_cart.dart';
 import 'package:restaurantpos/screens/menu_checkout.dart';
@@ -60,7 +62,11 @@ class MainDrawer extends StatelessWidget {
             Navigator.of(context).pushReplacementNamed(Transaction.routeName);
           }),
           buildListTile('Update to server', () {}),
-          buildListTile('Logout', () {}),
+          buildListTile('Logout', () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushReplacementNamed('/');
+            Provider.of<Auth>(context, listen: false).logout();
+          }),
         ],
       ),
     );

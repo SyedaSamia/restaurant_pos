@@ -15,7 +15,6 @@ class Checkout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orderData = Provider.of<CheckoutProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Checkout'),
@@ -28,10 +27,35 @@ class Checkout extends StatelessWidget {
         ],
       ),
       drawer: MainDrawer(),
-      body: ListView.builder(
+      body: FutureBuilder(
+        future: Provider.of<CheckoutProvider>(context, listen: false)
+            .fetchAndSetCheckoutOrders(),
+        builder: (ctx, dataSnapshot) {
+          if (dataSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            if (dataSnapshot.error != null) {
+              // ...
+              // Do error handling stuff
+              return Center(
+                child: Text('An error occurred!'),
+              );
+            } else {
+              return Consumer<CheckoutProvider>(
+                builder: (ctx, orderData, child) => ListView.builder(
+                  itemCount: orderData.orders.length,
+                  itemBuilder: (ctx, i) =>
+                      CheckoutOrderItem(orderData.orders[i]),
+                ),
+              );
+            }
+          }
+        },
+      ),
+      /*ListView.builder(
         itemCount: orderData.orders.length,
         itemBuilder: (ctx, i) => CheckoutOrderItem(orderData.orders[i]),
-      ),
+      ),*/
     );
   }
 }

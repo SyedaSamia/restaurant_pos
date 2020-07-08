@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "134659691902",
+    "firebase_url": "https://posrestaurant-simchang.firebaseio.com",
+    "project_id": "posrestaurant-simchang",
+    "storage_bucket": "posrestaurant-simchang.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134659691902:android:7d5e2e02d83d2fd2740f2f",
+        "android_client_info": {
+          "package_name": "com.sns.restaurantpos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "134659691902-5etmhjiod32kqb1p3le2ij95daag7s2v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBzWavZ8PaXU9aqFEwTQzVnRRVDxbQEOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "134659691902-5etmhjiod32kqb1p3le2ij95daag7s2v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
