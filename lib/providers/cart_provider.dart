@@ -22,7 +22,23 @@ class CartProvider with ChangeNotifier {
   }
 
   int get itemCount {
-    return _items.length;
+    // return _items.length;
+    var itemCount = 0;
+    if (_items != null) {
+      _items.forEach((key, value) {
+        itemCount += value.quantity;
+      });
+    }
+    return itemCount;
+  }
+
+  double get totalVat {
+    var total = 0.0;
+    _items.forEach((key, cartItem) {
+      total += cartItem.price * cartItem.quantity;
+    });
+    var vat = total * 0.15;
+    return vat;
   }
 
   double get totalAmount {
@@ -30,7 +46,8 @@ class CartProvider with ChangeNotifier {
     _items.forEach((key, cartItem) {
       total += cartItem.price * cartItem.quantity;
     });
-    return total;
+    var vat = totalVat;
+    return total + vat;
   }
 
   void addItem(

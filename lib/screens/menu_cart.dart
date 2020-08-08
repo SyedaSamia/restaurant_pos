@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
-import 'package:restaurantpos/providers/checkout_provider.dart';
+import 'package:restaurantpos/widgets/dialogs/checkout_dialog.dart';
+import 'package:restaurantpos/utils/size_config.dart';
 import 'package:restaurantpos/widgets/cart_item.dart';
 import 'package:restaurantpos/widgets/main_drawer.dart';
-
 import 'menu_checkout.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Cart extends StatelessWidget {
   static const routeName = '/cart';
@@ -13,6 +14,90 @@ class Cart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
+
+    void _yesDialogFunctionality(context) {
+      Navigator.of(context).pushReplacementNamed(
+        Checkout.routeName,
+      );
+    }
+
+    void _showDialog(context) {
+      SizeConfig().init(context);
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+              // backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              title: Text(
+                "Are You Sure?",
+                style: TextStyle(
+                  fontFamily: 'Source Sans Pro',
+                  fontSize: SizeConfig.safeBlockHorizontal * 5.5,
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              content: Container(
+                //   height: SizeConfig.blockSizeHorizontal * 30,
+                // width: SizeConfig.blockSizeVertical * 100,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      "You want to checkout",
+                      //  maxLines: 1,
+                      overflow: TextOverflow.visible,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontFamily: 'Source Sans Pro',
+                        color: Color(0xFF606060),
+                        fontSize: SizeConfig.safeBlockHorizontal * 4,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                      ),
+                    ),
+                    SizedBox(
+                      height: SizeConfig.blockSizeHorizontal * 3,
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          FlatButton(
+                            child: new Text("Cancel",
+                                style: TextStyle(
+                                  fontFamily: 'Source Sans Pro',
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: SizeConfig.safeBlockHorizontal * 6,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                )),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: new Text("Yes",
+                                style: TextStyle(
+                                  fontFamily: 'Source Sans Pro',
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: SizeConfig.safeBlockHorizontal * 6,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                )),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _yesDialogFunctionality(context);
+                            },
+                          ),
+                        ])
+                  ],
+                ),
+              )));
+    }
+
     final _floatingActionButton = FloatingActionButton.extended(
       label: Text(
         'Checkout',
@@ -25,80 +110,93 @@ class Cart extends StatelessWidget {
         color: Colors.white,
       ),
       onPressed: () {
-        {
-          Provider.of<CheckoutProvider>(context, listen: false)
-              .addCheckoutOrder(cart.items.values.toList(), cart.totalAmount);
-          Navigator.of(context).pushNamed(
-            Checkout.routeName,
-          );
-          cart.clear();
-        }
+        (cart.totalAmount != 0)
+            ? _showDialog(context)
+            : /*SnackBar(
+                  backgroundColor: Colors.yellow,
+                  content: Text('Empty Cart! Please add items to checkout'),
+                  duration: Duration(seconds: 3),
+                );*/
+            Fluttertoast.showToast(
+                msg: "Empty Cart! Please add items to checkout",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                // timeInSecForIosWeb: 1,
+                backgroundColor: Colors.blueGrey,
+                textColor: Colors.white,
+                fontSize: 16.0);
       },
       backgroundColor: Theme.of(context).primaryColor,
     );
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Cart'),
-        ),
-        drawer: MainDrawer(),
-        body: Column(
-          children: <Widget>[
-            Card(
-              margin: EdgeInsets.all(25),
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.of(context).pop(true);
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text('Cart'),
+            actions: <Widget>[
+              BackButton(
+                onPressed: () {
+                  Fluttertoast.cancel();
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
+          drawer: MainDrawer(),
+          body: (cart.totalAmount != 0)
+              ? Column(
                   children: <Widget>[
-                    Text(
-                      'Total',
-                      style: TextStyle(fontSize: 20),
+                    Card(
+                      margin: EdgeInsets.all(25),
+                      child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Total',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Spacer(),
+                              Chip(
+                                label: Text(
+                                  '\$${(cart.totalAmount - cart.totalVat).toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .primaryTextTheme
+                                        .title
+                                        .color,
+                                  ),
+                                ),
+                                backgroundColor: Theme.of(context).primaryColor,
+                              ),
+                            ],
+                          )),
                     ),
-                    Spacer(),
-                    Chip(
-                      label: Text(
-                        '\$${cart.totalAmount.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          color: Theme.of(context).primaryTextTheme.title.color,
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: cart.items.length,
+                        itemBuilder: (ctx, i) => CartItem(
+                          cart.items.values.toList()[i].id,
+                          cart.items.keys.toList()[i],
+                          cart.items.values.toList()[i].price,
+                          cart.items.values.toList()[i].quantity,
+                          cart.items.values.toList()[i].title,
                         ),
                       ),
-                      backgroundColor: Theme.of(context).primaryColor,
                     ),
-                    /*  FlatButton(
-                      child: Text('ORDER NOW'),
-                      onPressed: () {
-                        Provider.of<Orders>(context, listen: false).addOrder(
-                          cart.items.values.toList(),
-                          cart.totalAmount,
-                        );
-                        cart.clear();
-                      },
-                      textColor: Theme.of(context).primaryColor,
-                    )*/
                   ],
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: cart.items.length,
-                itemBuilder: (ctx, i) => CartItem(
-                  cart.items.values.toList()[i].id,
-                  cart.items.keys.toList()[i],
-                  cart.items.values.toList()[i].price,
-                  cart.items.values.toList()[i].quantity,
-                  cart.items.values.toList()[i].title,
-                ),
-              ),
-            ),
-          ],
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: _floatingActionButton
-
-        // bottomNavigationBar: ,
-        );
+                )
+              : Center(child: Text('Add items to cart!')),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: _floatingActionButton
+          // bottomNavigationBar: ,
+          ),
+    );
   }
 }

@@ -1,69 +1,49 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-
-import 'item_provider.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import '../models/item_provider.dart';
 
 class ItemsProvider with ChangeNotifier {
-  List<ItemProvider> _items = [
-    ItemProvider(
-        id: 'p1',
-        title: 'Korean Fried Chicken',
-        description: 'Korean Fried Chicken with hot korean sauce',
-        price: 300),
-    ItemProvider(
-        id: 'p2',
-        title: 'Korean Kimchi',
-        description: 'Korean Fried Chicken with hot korean sauce',
-        price: 90),
-    ItemProvider(
-        id: 'p3',
-        title: 'Japanese Fried Chicken',
-        description: 'Korean Fried Chicken with hot korean sauce',
-        price: 599),
-    ItemProvider(
-        id: 'p4',
-        title: 'Chinese Fried Chicken',
-        description: 'Korean Fried Chicken with hot korean sauce',
-        price: 230),
-    ItemProvider(
-        id: 'p5',
-        title: 'Korean Bulgogi',
-        description: 'Korean Fried Chicken with hot korean sauce',
-        price: 200),
-  ];
+  List<ItemProvider> _items = [];
+
+  final String userId;
+
+  ItemsProvider(this.userId, this._items);
 
   List<ItemProvider> get items {
     return [..._items];
   }
 
   ItemProvider findById(String id) {
-    return _items.firstWhere((prod) => prod.id == id);
+    return _items.firstWhere((prod) => prod.itemId == id);
   }
 
-  void addItem(ItemProvider item) {
-    final newProduct = ItemProvider(
-      title: item.title,
-      description: item.description,
-      price: item.price,
-   //   imageUrl: item.imageUrl,
-      id: DateTime.now().toString(),
-    );
-    _items.add(newProduct);
-    // _items.insert(0, newProduct); // at the start of the list
-    notifyListeners();
-  }
+  Future<void> fetchAndSetItems() async {
+    final url = 'http://haalkhata.xyz/api/items';
+    try {
+      final response = await http.get(url);
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      List _list = extractedData['response'];
+      if (_list == null) {
+        return;
+      }
+      final List<ItemProvider> loadedProducts = [];
+      for (int i = 0; i < _list.length; i++) {
+        loadedProducts.add(ItemProvider(
+            itemId: _list[i]['item_id'],
+            title: _list[i]['description'],
+            price: _list[i]['price']));
+        /*print(
+            'item_id: ${_list[i]['item_id']}\ntitle: ${_list[i]['description']}\nprice: ${_list[i]['price']}');*/
+        print(loadedProducts[0].title);
+      }
 
-  void updateItem(String id, ItemProvider newItem) {
-    final prodIndex = _items.indexWhere((prod) => prod.id == id);
-    if (prodIndex >= 0) {
-      _items[prodIndex] = newItem;
+      _items = loadedProducts;
+
       notifyListeners();
-    } else {
-      print('...');
+    } catch (error) {
+      throw (error);
     }
-  }
-
-  void deleteItem(String id) {
-    _items.removeWhere((prod) => prod.id == id);
-    notifyListeners();
   }
 }

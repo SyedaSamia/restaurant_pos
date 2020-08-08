@@ -7,8 +7,9 @@ import '../providers/checkout_provider.dart' as ord;
 
 class CheckoutOrderItem extends StatefulWidget {
   final ord.CheckoutItemProvider order;
+  final num;
 
-  CheckoutOrderItem(this.order);
+  CheckoutOrderItem(this.order, this.num);
 
   @override
   _CheckoutOrderItemState createState() => _CheckoutOrderItemState();
@@ -24,6 +25,7 @@ class _CheckoutOrderItemState extends State<CheckoutOrderItem> {
       child: Column(
         children: <Widget>[
           ListTile(
+            leading: CircleAvatar(child: Text('${widget.num}')),
             title: Text('${widget.order.amount} tk'),
             subtitle: Text(
               DateFormat('dd/MM/yyyy hh:mm').format(widget.order.dateTime),
@@ -60,7 +62,7 @@ class _CheckoutOrderItemState extends State<CheckoutOrderItem> {
                               fontSize: 18,
                               color: Colors.grey,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     )

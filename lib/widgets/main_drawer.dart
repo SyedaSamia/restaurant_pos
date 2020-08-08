@@ -1,33 +1,67 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/auth.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/providers/checkout_provider.dart';
 import 'package:restaurantpos/screens/home.page.dart';
-import 'package:restaurantpos/screens/menu_cart.dart';
 import 'package:restaurantpos/screens/menu_checkout.dart';
-import 'package:restaurantpos/screens/menu_transaction.dart';
+import 'package:restaurantpos/widgets/dialogs/logout_dialog.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<Auth>(context, listen: false);
+    final checkout = Provider.of<CheckoutProvider>(context, listen: false);
+    final cart = Provider.of<CartProvider>(context);
     final navigationDrawerHeader = DrawerHeader(
         decoration: BoxDecoration(color: Theme.of(context).primaryColor),
         margin: EdgeInsets.zero,
         padding: EdgeInsets.zero,
         child: Stack(children: <Widget>[
           Positioned(
+            top: 15,
+            left: 16,
+            child: Container(
+              // color: Colors.black,
+              decoration: BoxDecoration(
+                //   backgroundBlendMode: BlendMode.color,
+                shape: BoxShape.rectangle,
+                border: Border.all(color: Colors.white),
+              ),
+              height: 70,
+              width: 200,
+              child: Center(
+                child: Text(
+                  'Restaurant Logo',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.black38),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
               bottom: 30.0,
               left: 16.0,
-              child: Text("Waiter Name",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.w500))),
+              child: user.userFirstName == null
+                  ? Text('Waiter Name')
+                  : Text("${user.userFirstName} ${user.userLastName}",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28.0,
+                          fontWeight: FontWeight.w500))),
           Positioned(
               bottom: 15.0,
               left: 16.0,
-              child: Text("waitermail@domain.com",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500))),
+              child: user.userEmail == null
+                  ? Text('email@email.com')
+                  : Text("${user.userEmail}",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500))),
         ]));
     Widget buildListTile(String title, Function tapHandler) {
       return ListTile(
@@ -50,19 +84,59 @@ class MainDrawer extends StatelessWidget {
           buildListTile('Home', () {
             Navigator.of(context).pushReplacementNamed(HomePage.routeName);
           }),
-          buildListTile('Cart', () {
+          /*  buildListTile('Cart', () {
             Navigator.of(context).pushReplacementNamed(Cart.routeName);
-          }),
+          }),*/
           buildListTile('Checkout', () {
-            Navigator.of(context).pushReplacementNamed(Checkout.routeName);
+            Navigator.of(context).pop();
+            (cart.totalAmount != 0)
+                ? Navigator.of(context).pushReplacementNamed(Checkout.routeName)
+                : Fluttertoast.showToast(
+                    msg: "Empty Cart! Please add items to checkout",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    // timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.blueGrey,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
           }),
-          buildListTile('Transaction', () {
+          /* buildListTile('Transaction', () {
             Navigator.of(context).pushReplacementNamed(Transaction.routeName);
+          }),*/
+          buildListTile('Update to server', () {
+            Navigator.of(context).pop();
+            if (checkout.checkNullOrder) {
+              Fluttertoast.showToast(
+                  msg: "There is no order to update!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.blueGrey,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            } else {
+              final update = checkout.updateCheckoutOrderToServer(user.userId);
+              if (update != null) {
+                Fluttertoast.showToast(
+                    msg: "Updated to server!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.blueGrey,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              }
+            }
           }),
-          buildListTile('Update to server', () {}),
-          buildListTile('Logout', () {}),
+          buildListTile('Logout', () {
+            showLogoutDialog(context);
+          }),
         ],
       ),
     );
+  }
+
+  _showCheckoutDialog(BuildContext context) {
+    AlertDialog();
   }
 }

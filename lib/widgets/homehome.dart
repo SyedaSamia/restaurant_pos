@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:restaurantpos/screens/category_screen.dart';
-import 'package:restaurantpos/screens/edit_item_screen.dart';
 import 'package:restaurantpos/screens/item_screen.dart';
 import 'package:restaurantpos/screens/menu_cart.dart';
-import 'package:restaurantpos/screens/stock_screen.dart';
-
+import 'package:restaurantpos/screens/order_screen.dart';
 import 'badge.dart';
 import 'main_drawer.dart';
 
@@ -45,7 +43,7 @@ class _HomeHomeState extends State<HomeHome> {
                     Icons.shopping_cart,
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushNamed(Cart.routeName);
+                    Navigator.of(context).pushReplacementNamed(Cart.routeName);
                   },
                 ),
               ),
@@ -54,15 +52,9 @@ class _HomeHomeState extends State<HomeHome> {
           drawer: MainDrawer(),
           body: TabBarView(children: <Widget>[
             ItemScreen(),
-            StockScreen(),
+            OrderScreen(),
             CategoryScreen()
           ]),
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context).pushNamed(EditItemScreen.routeName);
-            },
-          ),
         ));
   }
 }
