@@ -6,10 +6,10 @@ import 'package:restaurantpos/utils/size_config.dart';
 import 'package:restaurantpos/widgets/badge.dart';
 import 'package:restaurantpos/widgets/main_drawer.dart';
 
-import 'category_screen.dart';
-import 'item_screen.dart';
-import 'menu_cart.dart';
-import 'order_screen.dart';
+import 'tab_screens/category_screen.dart';
+import 'tab_screens/item_screen.dart';
+import 'menu_screens/menu_cart.dart';
+import 'tab_screens/order_screen.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = '/home';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:restaurantpos/providers/items_provider.dart';
-import 'package:restaurantpos/widgets/item.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/widgets/item/item.dart';
 
 class ItemScreen extends StatefulWidget {
   @override

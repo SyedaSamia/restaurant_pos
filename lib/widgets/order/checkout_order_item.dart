@@ -2,8 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../providers/checkout_provider.dart' as ord;
+import 'package:restaurantpos/providers/checkout_provider.dart' as ord;
 
 class CheckoutOrderItem extends StatefulWidget {
   final ord.CheckoutItemProvider order;

@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/providers/order_staging_provider.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/order_staging_screen.dart';
 import 'package:restaurantpos/widgets/dialogs/checkout_dialog.dart';
 import 'package:restaurantpos/utils/size_config.dart';
-import 'package:restaurantpos/widgets/cart_item.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/widgets/cart/cart_item.dart';
 import 'package:restaurantpos/widgets/main_drawer.dart';
+import 'package:restaurantpos/widgets/order_staging_widgets/staging_order_item.dart';
 import 'menu_checkout.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Cart extends StatelessWidget {
   static const routeName = '/cart';
-
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
+    final vm = Provider.of<OrderStagingProvider>(context, listen: false);
 
     void _yesDialogFunctionality(context) {
+      vm.addStagingOrderFromCart(
+          cart.items.values.toList(), cart.totalAmount, cart.totalVat);
+      cart.clear();
       Navigator.of(context).pushReplacementNamed(
-        Checkout.routeName,
+        OrderStaging.routeName,
       );
     }
 
@@ -47,7 +53,7 @@ class Cart extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      "You want to checkout",
+                      "You want to stage order",
                       //  maxLines: 1,
                       overflow: TextOverflow.visible,
                       textAlign: TextAlign.start,
@@ -100,7 +106,7 @@ class Cart extends StatelessWidget {
 
     final _floatingActionButton = FloatingActionButton.extended(
       label: Text(
-        'Checkout',
+        'Staging Order',
         style: TextStyle(
           color: Colors.white,
         ),
@@ -118,7 +124,7 @@ class Cart extends StatelessWidget {
                   duration: Duration(seconds: 3),
                 );*/
             Fluttertoast.showToast(
-                msg: "Empty Cart! Please add items to checkout",
+                msg: "Empty Cart! Please add items to stage order",
                 toastLength: Toast.LENGTH_SHORT,
                 gravity: ToastGravity.CENTER,
                 // timeInSecForIosWeb: 1,

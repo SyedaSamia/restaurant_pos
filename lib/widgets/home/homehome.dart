@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
-import 'package:restaurantpos/screens/category_screen.dart';
-import 'package:restaurantpos/screens/item_screen.dart';
-import 'package:restaurantpos/screens/menu_cart.dart';
-import 'package:restaurantpos/screens/order_screen.dart';
-import 'badge.dart';
-import 'main_drawer.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/tab_screens/category_screen.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/tab_screens/item_screen.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/menu_cart.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/tab_screens/order_screen.dart';
+import '../badge.dart';
+import '../main_drawer.dart';
 
 class HomeHome extends StatefulWidget {
   @override

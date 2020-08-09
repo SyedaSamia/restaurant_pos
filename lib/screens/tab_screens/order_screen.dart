@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/auth.dart';
 import 'package:restaurantpos/providers/checkout_provider.dart';
 import 'package:restaurantpos/utils/size_config.dart';
-import 'package:restaurantpos/widgets/checkout_order_item.dart';
 import 'package:restaurantpos/widgets/main_drawer.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'menu_cart.dart';
+import 'package:restaurantpos/widgets/order/checkout_order_item.dart';
+import '../menu_screens/menu_cart.dart';
 
 class OrderScreen extends StatelessWidget {
   static const routeName = '/order';
@@ -25,7 +25,6 @@ class OrderScreen extends StatelessWidget {
 
     final checkout = Provider.of<CheckoutProvider>(context, listen: false);
     final user = Provider.of<Auth>(context, listen: false);
-    var updating = false;
     return Scaffold(
       drawer: MainDrawer(),
       body: Consumer<CheckoutProvider>(

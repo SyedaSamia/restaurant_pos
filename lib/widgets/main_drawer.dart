@@ -5,8 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/auth.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:restaurantpos/providers/checkout_provider.dart';
+import 'package:restaurantpos/providers/order_staging_provider.dart';
 import 'package:restaurantpos/screens/home.page.dart';
-import 'package:restaurantpos/screens/menu_checkout.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/menu_checkout.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/tab_screens/order_screen.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/order_staging_screen.dart';
 import 'package:restaurantpos/widgets/dialogs/logout_dialog.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -14,7 +17,7 @@ class MainDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<Auth>(context, listen: false);
     final checkout = Provider.of<CheckoutProvider>(context, listen: false);
-    final cart = Provider.of<CartProvider>(context);
+    final orderStaging = Provider.of<OrderStagingProvider>(context);
     final navigationDrawerHeader = DrawerHeader(
         decoration: BoxDecoration(color: Theme.of(context).primaryColor),
         margin: EdgeInsets.zero,
@@ -87,12 +90,26 @@ class MainDrawer extends StatelessWidget {
           /*  buildListTile('Cart', () {
             Navigator.of(context).pushReplacementNamed(Cart.routeName);
           }),*/
-          buildListTile('Checkout', () {
+          /*buildListTile('Checkout', () {
             Navigator.of(context).pop();
             (cart.totalAmount != 0)
                 ? Navigator.of(context).pushReplacementNamed(Checkout.routeName)
                 : Fluttertoast.showToast(
                     msg: "Empty Cart! Please add items to checkout",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    // timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.blueGrey,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+          }),*/
+          buildListTile('Pending Orders', () {
+            Navigator.of(context).pop();
+            (orderStaging.stagingOrders.length > 0)
+                ? Navigator.of(context)
+                    .pushReplacementNamed(OrderStaging.routeName)
+                : Fluttertoast.showToast(
+                    msg: "No pending orders to checkout!",
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.CENTER,
                     // timeInSecForIosWeb: 1,
@@ -136,7 +153,7 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
-  _showCheckoutDialog(BuildContext context) {
+  /*_showCheckoutDialog(BuildContext context) {
     AlertDialog();
-  }
+  }*/
 }

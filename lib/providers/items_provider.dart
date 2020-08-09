@@ -4,6 +4,12 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import '../models/item_provider.dart';
 
+/*
+* Gets items from server with api calling
+*
+*
+* */
+
 class ItemsProvider with ChangeNotifier {
   List<ItemProvider> _items = [];
 

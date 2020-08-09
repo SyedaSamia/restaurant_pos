@@ -8,13 +8,15 @@ import 'package:restaurantpos/providers/checkout_provider.dart';
 import 'package:restaurantpos/providers/items_provider.dart';
 import 'package:restaurantpos/screens/home.page.dart';
 import 'package:restaurantpos/screens/login.screen.dart';
-import 'package:restaurantpos/screens/menu_cart.dart';
-import 'package:restaurantpos/screens/menu_checkout.dart';
-import 'package:restaurantpos/screens/menu_transaction.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/menu_cart.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/menu_checkout.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/menu_transaction.dart';
+import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/order_staging_screen.dart';
 import 'package:restaurantpos/screens/splash_screen.dart';
 import 'package:syncfusion_flutter_core/core.dart';
 import 'models/category.dart';
 import 'models/item_provider.dart';
+import 'package:restaurantpos/providers/order_staging_provider.dart';
 
 void setupLocator() {
   GetIt.instance.registerLazySingleton(() => null);
@@ -65,6 +67,14 @@ class MyApp extends StatelessWidget {
                     ? []
                     : previousCheckoutOrders.orders),
           ),
+          ChangeNotifierProxyProvider<Auth, OrderStagingProvider>(
+            update: (ctx, auth, previousCheckoutOrders) => OrderStagingProvider(
+                auth.token,
+                auth.userId,
+                previousCheckoutOrders == null
+                    ? []
+                    : previousCheckoutOrders.stagingOrders),
+          ),
         ],
         child: Consumer<Auth>(
             builder: (ctx, auth, child) => MaterialApp(
@@ -99,6 +109,7 @@ class MyApp extends StatelessWidget {
                     Cart.routeName: (ctx) => Cart(),
                     Checkout.routeName: (ctx) => Checkout(),
                     Transaction.routeName: (ctx) => Transaction(),
+                    OrderStaging.routeName: (ctx) => OrderStaging()
                   },
                   debugShowCheckedModeBanner: false,
                 )));
