@@ -1,11 +1,10 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:restaurantpos/providers/checkout_provider.dart' as ord;
+import 'package:point_of_sale6/models/order.dart' as ord;
 
 class CheckoutOrderItem extends StatefulWidget {
-  final ord.CheckoutItemProvider order;
+//  final ord.CheckoutItemProvider order;
+  final ord.OrderModel order;
   final num;
 
   CheckoutOrderItem(this.order, this.num);
@@ -25,10 +24,10 @@ class _CheckoutOrderItemState extends State<CheckoutOrderItem> {
         children: <Widget>[
           ListTile(
             leading: CircleAvatar(child: Text('${widget.num}')),
-            title: Text('${widget.order.amount} tk'),
-            subtitle: Text(
-              DateFormat('dd/MM/yyyy hh:mm').format(widget.order.dateTime),
-            ),
+            title: Text('${widget.order.totalAmount} tk'),
+            subtitle: Text('${widget.order.orderDate}'
+                //DateFormat('dd/MM/yyyy hh:mm').format(widget.order.orderDate),
+                ),
             trailing: IconButton(
               icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
               onPressed: () {
@@ -49,7 +48,7 @@ class _CheckoutOrderItemState extends State<CheckoutOrderItem> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                            prod.title,
+                            '${prod.title}',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

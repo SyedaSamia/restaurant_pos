@@ -1,20 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:point_of_sale6/providers/auth.dart';
+import 'package:point_of_sale6/providers/cart_provider.dart';
+import 'package:point_of_sale6/providers/checkout_provider.dart';
+import 'package:point_of_sale6/providers/order_staging_provider.dart';
+import 'package:point_of_sale6/screens/home.page.dart';
+import 'package:point_of_sale6/screens/menu_screens/order_staging_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurantpos/providers/auth.dart';
-import 'package:restaurantpos/providers/cart_provider.dart';
-import 'package:restaurantpos/providers/checkout_provider.dart';
-import 'package:restaurantpos/providers/order_staging_provider.dart';
-import 'package:restaurantpos/screens/home.page.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/menu_checkout.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/tab_screens/order_screen.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/order_staging_screen.dart';
-import 'package:restaurantpos/widgets/dialogs/logout_dialog.dart';
+
+import 'dialogs/logout_dialog.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<CartProvider>(context);
     final user = Provider.of<Auth>(context, listen: false);
     final checkout = Provider.of<CheckoutProvider>(context, listen: false);
     final orderStaging = Provider.of<OrderStagingProvider>(context);
@@ -85,6 +85,7 @@ class MainDrawer extends StatelessWidget {
         children: <Widget>[
           navigationDrawerHeader,
           buildListTile('Home', () {
+            Navigator.of(context).pop();
             Navigator.of(context).pushReplacementNamed(HomePage.routeName);
           }),
           /*  buildListTile('Cart', () {
@@ -105,17 +106,19 @@ class MainDrawer extends StatelessWidget {
           }),*/
           buildListTile('Pending Orders', () {
             Navigator.of(context).pop();
-            (orderStaging.stagingOrders.length > 0)
-                ? Navigator.of(context)
-                    .pushReplacementNamed(OrderStaging.routeName)
-                : Fluttertoast.showToast(
-                    msg: "No pending orders to checkout!",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    // timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.blueGrey,
-                    textColor: Colors.white,
-                    fontSize: 16.0);
+            if (orderStaging.stagingOrders.length > 0) {
+              cart.clear();
+              Navigator.of(context)
+                  .pushReplacementNamed(OrderStaging.routeName);
+            } else
+              return Fluttertoast.showToast(
+                  msg: "No pending orders to checkout!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  // timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.blueGrey,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
           }),
           /* buildListTile('Transaction', () {
             Navigator.of(context).pushReplacementNamed(Transaction.routeName);

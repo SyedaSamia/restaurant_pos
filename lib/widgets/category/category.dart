@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:point_of_sale6/models/category.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurantpos/models/category.dart';
 
 class Category extends StatelessWidget {
   @override

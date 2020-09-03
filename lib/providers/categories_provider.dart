@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:restaurantpos/models/category.dart';
+import 'package:point_of_sale6/helpers/db_helper.dart';
+import 'package:point_of_sale6/models/category.dart';
 
 class CategoriesProvider with ChangeNotifier {
   List<CategoryProvider> _category = [];
@@ -21,28 +23,49 @@ class CategoriesProvider with ChangeNotifier {
   }
 
   Future<void> fetchAndSetItems() async {
-    final url = 'http://haalkhata.xyz/api/item_categories';
-    try {
-      final response = await http.get(url);
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      var _list = extractedData['response'];
-      if (_list == null) {
-        return;
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final url = 'http://haalkhata.xyz/api/item_categories';
+      try {
+        final response = await http.get(url);
+        final extractedData =
+            json.decode(response.body) as Map<String, dynamic>;
+        var _list = extractedData['response'];
+        if (response.statusCode == 200) {
+          List<CategoryProvider> loadedProducts = [];
+          for (int i = 0; i < _list.length; i++) {
+            loadedProducts.add(CategoryProvider(
+              categoryId: _list[i]['category_id'],
+              categoryDescription: _list[i]['category_description'],
+              categoryImage: _list[i]['category_image'],
+            ));
+            DBHelper.insert('categories', {
+              'category_id': _list[i]['category_id'],
+              'category_description': _list[i]['category_description'],
+              'price': _list[i]['category_image']
+            });
+          }
+          final dataList = await DBHelper.getData('categories');
+          print('datalist $dataList');
+          _category = loadedProducts;
+          notifyListeners();
+        } else {
+          return;
+        }
+      } catch (error) {
+        throw (error);
       }
-      List<CategoryProvider> loadedProducts = [];
-      for (int i = 0; i < _list.length; i++) {
-        loadedProducts.add(CategoryProvider(
-          categoryId: _list[i]['category_id'],
-          categoryDescription: _list[i]['category_description'],
-          categoryImage: _list[i]['category_image'],
-        ));
+    } else {
+      final dataList = await DBHelper.getData('categories');
+      print(dataList);
+      for (int i = 0; i < dataList.length; i++) {
+        _category[i] = CategoryProvider(
+            categoryId: dataList[i]['item_id'],
+            categoryDescription: dataList[i]['item_title'],
+            categoryImage: dataList[i]['price']);
       }
-
-      _category = loadedProducts;
-
       notifyListeners();
-    } catch (error) {
-      throw (error);
     }
   }
 }

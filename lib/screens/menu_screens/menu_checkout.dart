@@ -2,23 +2,22 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:point_of_sale6/providers/checkout_provider.dart';
+import 'package:point_of_sale6/providers/order_staging_provider.dart';
+import 'package:point_of_sale6/screens/tab_screens/item_screen.dart';
+import 'package:point_of_sale6/utils/size_config.dart';
+import 'package:point_of_sale6/widgets/checkout/checkout_item.dart';
+import 'package:point_of_sale6/widgets/main_drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurantpos/providers/cart_provider.dart';
-import 'package:restaurantpos/providers/checkout_provider.dart';
-import 'package:restaurantpos/providers/order_staging_provider.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/screens/menu_screens/order_staging_screen.dart';
-import 'package:restaurantpos/utils/size_config.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/widgets/cart/cart_item.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/new%20one/restaurant_pos/lib/widgets/checkout/checkout_item.dart';
-import 'package:restaurantpos/widgets/main_drawer.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
+import '../home.page.dart';
+import 'order_staging_screen.dart';
+
 class Checkout extends StatelessWidget {
-  /*final _id;
-  Checkout(this._id);*/
   static const routeName = '/checkout';
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
@@ -28,11 +27,6 @@ class Checkout extends StatelessWidget {
     var iNameList = [];
     var iQuantityList = [];
     var iPriceList = [];
-
-    /* Builder _floatingActionButton() {
-      return Builder(
-          builder: (context) => );
-    }*/
 
     final _floatingActionButton = FloatingActionButton.extended(
       label: Text(
@@ -46,19 +40,19 @@ class Checkout extends StatelessWidget {
         color: Colors.white,
       ),
       onPressed: () {
-        /*_scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text('Order Added!'),
-          duration: Duration(seconds: 3),
-        ));*/
         if (cart.totalCheckoutAmount != 0) {
           Provider.of<CheckoutProvider>(context, listen: false)
-              .addCheckoutOrder(cart.checkoutItem, cart.totalCheckoutAmount,
-                  cart.totalCheckoutVat);
+              .addCheckoutOrder(
+            cart.currentOrderId,
+            cart.totalCheckoutAmount,
+            cart.totalCheckoutVat,
+          );
           for (int i = 0; i < cart.checkoutItem.length; i++) {
             iNameList.add(cart.checkoutItem[i].title);
             iPriceList.add(cart.checkoutItem[i].price);
             iQuantityList.add(cart.checkoutItem[i].quantity);
           }
+
           Fluttertoast.showToast(
                   msg: "Checkout Complete!",
                   toastLength: Toast.LENGTH_SHORT,
@@ -67,19 +61,22 @@ class Checkout extends StatelessWidget {
                   backgroundColor: Colors.blueGrey,
                   textColor: Colors.white,
                   fontSize: 16.0)
-              .then((value) => sleep(Duration(seconds: 1)))
-              .then((value) => _createPDF(
-                  cart.checkoutItem.length,
-                  iNameList,
-                  iPriceList,
-                  iQuantityList,
-                  cart.totalCheckoutVat,
-                  cart.totalCheckoutAmount))
+              .then((value) =>
+                  /*sleep(Duration(seconds: 1)))
+              .then((value) =>*/
+                  _createPDF(
+                      cart.checkoutItem.length,
+                      iNameList,
+                      iPriceList,
+                      iQuantityList,
+                      cart.totalCheckoutVat,
+                      cart.totalCheckoutAmount))
               .then((value) {
             cart.clear();
-            cart.deleteOrder();
             Fluttertoast.cancel();
-            Navigator.of(context).pop(true);
+            Provider.of<CheckoutProvider>(context, listen: false).fetchOrders();
+            Navigator.of(context).pushReplacementNamed(HomePage.routeName);
+            // Navigator.of(context).pop(true);
             Fluttertoast.cancel();
           });
         }
@@ -89,7 +86,9 @@ class Checkout extends StatelessWidget {
 
     return WillPopScope(
       onWillPop: () {
-        Navigator.of(context).pop(true);
+        // Navigator.of(context).pop(true);
+        return Navigator.of(context)
+            .pushReplacementNamed(OrderStaging.routeName);
       },
       child: Scaffold(
           appBar: AppBar(
@@ -105,84 +104,48 @@ class Checkout extends StatelessWidget {
           ),
           drawer: MainDrawer(),
           body: ListView.builder(
-            itemCount: cart.checkoutItem.length + 1,
-            itemBuilder: (ctx, i) =>
-                /*cart.checkoutItem.length == 0
-                  ? Container(
-                      child: Center(
-                        child: Text('No Checkout Item'),
-                      ),
-                    )
-                  :*/
-                i > cart.checkoutItem.length - 1
-                    ? Container(
-                        width: SizeConfig.blockSizeHorizontal * 70,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                width: SizeConfig.blockSizeHorizontal * 70,
-                                height: SizeConfig.blockSizeVertical * 5,
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text('Vat (15%)'),
-                                      Text('\$${cart.totalCheckoutVat}'),
-                                    ]),
-                              ),
-                              Container(
-                                width: SizeConfig.blockSizeHorizontal * 70,
-                                height: SizeConfig.blockSizeVertical * 5,
-                                child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text('Total'),
-                                      Text('\$${cart.totalCheckoutAmount}'),
-                                    ]),
-                              ),
-                            ]))
-                    : CheckoutItem(
-                        cart.checkoutItem[i].id,
-                        cart.checkoutItem[i].price,
-                        cart.checkoutItem[i].quantity,
-                        cart.checkoutItem[i].title,
-                      ),
-
-            /*Consumer<CheckoutProvider>(
-            builder: (ctx, orderData, child) => ListView.builder(
-              itemCount: orderData.orders.length,
-              itemBuilder: (ctx, i) => CheckoutOrderItem(orderData.orders[i]),
-            ),
-          ),*/
-
-            /*FutureBuilder(
-          future: Provider.of<CheckoutProvider>(context, listen: false)
-              .fetchAndSetCheckoutOrders(),
-          builder: (ctx, dataSnapshot) {
-            if (dataSnapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              if (dataSnapshot.error != null) {
-                // ...
-                // Do error handling stuff
-                return Center(
-                  child: Text('An error occurred! ${dataSnapshot.error}'),
-                );
-              } else {
-                return Consumer<CheckoutProvider>(
-                  builder: (ctx, orderData, child) => ListView.builder(
-                    itemCount: orderData.orders.length,
-                    itemBuilder: (ctx, i) =>
-                        CheckoutOrderItem(orderData.orders[i]),
-                  ),
-                );
-              }
-            }
-          },
-        ),*/
+            itemCount: cart.currentCheckoutItemsCount + 1,
+            itemBuilder: (ctx, i) => i < cart.currentCheckoutItemsCount
+                ? CheckoutItem(
+                    cart.checkoutItem[i].itemId,
+                    cart.checkoutItem[i].price,
+                    cart.checkoutItem[i].quantity,
+                    cart.checkoutItem[i].title,
+                  )
+                : Container(
+                    width: SizeConfig.blockSizeHorizontal * 70,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Container(
+                            width: SizeConfig.blockSizeHorizontal * 70,
+                            height: SizeConfig.blockSizeVertical * 5,
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text('Vat (15%)'),
+                                  Text('\$${cart.totalCheckoutVat}'),
+                                ]),
+                          ),
+                          Container(
+                            width: SizeConfig.blockSizeHorizontal * 70,
+                            height: SizeConfig.blockSizeVertical * 5,
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text('Total'),
+                                  Text('\$${cart.totalCheckoutAmount}'),
+                                ]),
+                          ),
+                        ])),
           ),
+          /*: Container(
+                  child: Center(
+                    child: Text('Please Wait...'),
+                  ),
+                )*/
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: _floatingActionButton),

@@ -1,38 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:point_of_sale6/providers/cart_provider.dart';
 import 'package:point_of_sale6/providers/order_staging_provider.dart';
+import 'package:point_of_sale6/screens/menu_screens/order_staging_screen.dart';
 import 'package:point_of_sale6/utils/size_config.dart';
 import 'package:point_of_sale6/widgets/cart/cart_item.dart';
-import 'package:point_of_sale6/widgets/main_drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
-import 'order_staging_screen.dart';
+import 'item_screen_to_edit.dart';
 
-class Cart extends StatefulWidget {
-  static const routeName = '/cart';
-
-  @override
-  _CartState createState() => _CartState();
-}
-
-class _CartState extends State<Cart> {
+class EditCart extends StatelessWidget {
+  static const routeName = '/editCart';
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
-    final vm = Provider.of<OrderStagingProvider>(context, listen: false);
-    bool _checkedValue = false;
+    final vm = Provider.of<OrderStagingProvider>(context);
+
     void _yesDialogFunctionality(context) {
       vm
           .addStagingOrderFromCart(cart.items.values.toList(), cart.totalAmount,
-              cart.totalVat, DateTime.now().toString())
+              cart.totalVat, cart.carrStagedOrderId)
           .then((value) {
-        cart.changeCheckVat(_checkedValue);
         vm.fetchAndSetStagedOrders();
         cart.clear();
       });
-
       Navigator.of(context).pop();
       Navigator.of(context).pushReplacementNamed(
         OrderStaging.routeName,
@@ -116,19 +107,18 @@ class _CartState extends State<Cart> {
               )));
     }
 
-    final _floatingActionButton = FloatingActionButton.extended(
-      label: Text(
-        'Staging Order',
+    final _updateOrder = RaisedButton(
+      color: Theme.of(context).primaryColor,
+      child: Text(
+        'Update Order',
         style: TextStyle(
           color: Colors.white,
         ),
       ),
-      icon: Icon(
-        Icons.arrow_forward_ios,
-        color: Colors.white,
-      ),
       onPressed: () {
-        (cart.totalAmount != 0)
+        _showDialog(context);
+
+        /*(cart.totalAmount != 0)
             ? _showDialog(context)
             : Fluttertoast.showToast(
                 msg: "Empty Cart! Please add items to stage order",
@@ -138,114 +128,92 @@ class _CartState extends State<Cart> {
                 backgroundColor: Colors.blueGrey,
                 textColor: Colors.white,
                 fontSize: 16.0);
+    */
       },
-      backgroundColor: Theme.of(context).primaryColor,
+    );
+
+    final _gotoEdit = RaisedButton(
+      color: Theme.of(context).primaryColor,
+      child: Row(
+        children: [
+          Icon(
+            Icons.home,
+            color: Colors.white,
+          ),
+          Text(
+            'Edit Order',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      onPressed: () {
+        Navigator.of(context).pushNamed(EditItemScreen.routeName);
+      },
     );
 
     return WillPopScope(
-      onWillPop: () {
-        Navigator.of(context).pop(true);
-      },
+      onWillPop: () async => false,
       child: Scaffold(
-          appBar: AppBar(
-            title: Text('Cart'),
-            actions: <Widget>[
-              BackButton(
-                onPressed: () {
-                  //  Fluttertoast.cancel();
-                  Navigator.of(context).pop(true);
-                },
-              )
-            ],
-          ),
-          drawer: MainDrawer(),
-          body: (cart.itemCount > 0)
-              ? Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    StatefulBuilder(
-                        builder: (BuildContext ctx, StateSetter setState) {
-                      return CheckboxListTile(
-                        title: Text('Add Vat(15%)'),
-                        activeColor: Colors.blue,
-                        value: _checkedValue,
-                        onChanged: (newValue) {
-                          setState(() {
-                            _checkedValue = newValue;
-                            //cart.changeCheckVat(_checkedValue);
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                      );
-                    }),
-                    Card(
-                      margin: EdgeInsets.symmetric(horizontal: 17),
-                      child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Total',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              Spacer(),
-                              Chip(
-                                label: Text(
-                                  '\$${(cart.totalAmount - cart.totalVat).toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    color: Theme.of(context)
-                                        .primaryTextTheme
-                                        .title
-                                        .color,
-                                  ),
+        appBar: AppBar(
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          title: Text('Edit Cart'),
+        ),
+        //  drawer: MainDrawer(),
+        body: (cart.items.length > 0)
+            ? Column(
+                children: <Widget>[
+                  Card(
+                    margin: EdgeInsets.all(25),
+                    child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              'Total',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            Spacer(),
+                            Chip(
+                              label: Text(
+                                '\$${(cart.totalAmount - cart.totalVat).toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .primaryTextTheme
+                                      .title
+                                      .color,
                                 ),
-                                backgroundColor: Theme.of(context).primaryColor,
                               ),
-                            ],
-                          )),
-                    ),
-                    /*  Container(
-                      child: Row(
-                        children: <Widget>[
-                          Text('Discount'),
-                          Expanded(
-                            child: TextField(
-                                // controller: _controller,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[
-                                  WhitelistingTextInputFormatter.digitsOnly
-                                ],
-                                decoration: InputDecoration(
-                                       labelText:"whatever you want",
-                                    hintText: "whatever you want",
-                                    icon: Icon(Icons.phone_iphone))),
-                          )
-                        ],
-                      ),
-                    ),*/
-
-                    SizedBox(height: 10),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: cart.items.length,
-                        itemBuilder: (ctx, i) => CartItem(
+                              backgroundColor: Theme.of(context).primaryColor,
+                            ),
+                          ],
+                        )),
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: cart.items.length,
+                      itemBuilder: (ctx, i) {
+                        //   cart.fetchCartItem();
+                        return CartItem(
                           cart.items.values.toList()[i].id,
                           cart.items.keys.toList()[i],
                           cart.items.values.toList()[i].price,
                           cart.items.values.toList()[i].quantity,
                           cart.items.values.toList()[i].title,
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                  ],
-                )
-              : Center(child: Text('Add items to cart!')),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: _floatingActionButton
-          // bottomNavigationBar: ,
-          ),
+                  ),
+                ],
+              )
+            : Center(child: Text('Add items to cart!')),
+
+        persistentFooterButtons: [_gotoEdit, _updateOrder],
+      ),
     );
   }
 }

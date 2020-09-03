@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:point_of_sale6/providers/cart_provider.dart';
+import 'package:point_of_sale6/utils/size_config.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurantpos/providers/cart_provider.dart';
 
 class CartItem extends StatelessWidget {
   final String id;
@@ -19,8 +20,10 @@ class CartItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    final cart = Provider.of<CartProvider>(context, listen: false);
     return Dismissible(
-      key: ValueKey(id),
+      key: ValueKey(productId),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -60,7 +63,7 @@ class CartItem extends StatelessWidget {
                 ));
       },
       onDismissed: (direction) {
-        Provider.of<CartProvider>(context, listen: false).removeItem(productId);
+        cart.removeItem(productId);
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -69,18 +72,43 @@ class CartItem extends StatelessWidget {
         ),
         child: Padding(
           padding: EdgeInsets.all(8),
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Padding(
-                padding: EdgeInsets.all(5),
-                child: FittedBox(
-                  child: Text('$quantity x'),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: CircleAvatar(
+                  child: Padding(
+                    padding: EdgeInsets.all(5),
+                    child: FittedBox(
+                      child: Text('$quantity x'),
+                    ),
+                  ),
                 ),
+                title: Text(title),
+                subtitle: Text('$price tk'),
+                trailing: Text('Total: \$${(price * quantity)}'),
               ),
-            ),
-            title: Text(title),
-            subtitle: Text('$price tk'),
-            trailing: Text('Total: \$${(price * quantity)}'),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal * 60,
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.add,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: () => cart.addSingleItem(productId),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.remove,
+                        color: Theme.of(context).primaryColor),
+                    onPressed: () => cart.removeSingleItem(productId),
+                  )
+                ],
+              )
+            ],
           ),
         ),
       ),

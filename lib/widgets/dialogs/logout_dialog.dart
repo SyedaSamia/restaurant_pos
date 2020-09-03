@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:point_of_sale6/providers/auth.dart';
+import 'package:point_of_sale6/utils/size_config.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurantpos/providers/auth.dart';
-import 'package:restaurantpos/utils/size_config.dart';
 
 void showLogoutDialog(context) {
   SizeConfig().init(context);

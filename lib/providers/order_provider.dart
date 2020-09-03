@@ -3,8 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'dart:convert';
 
-import 'package:restaurantpos/providers/auth.dart';
-
 class Order with ChangeNotifier {
   //String key;
   /* String orderData;

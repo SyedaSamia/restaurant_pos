@@ -3,7 +3,7 @@ import 'package:point_of_sale6/models/item_provider.dart';
 import 'package:point_of_sale6/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
-class Item extends StatelessWidget {
+class EditItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final item = Provider.of<ItemProvider>(context, listen: false);
@@ -11,14 +11,10 @@ class Item extends StatelessWidget {
 
     return ListTile(
       //  contentPadding: EdgeInsets.only(top: 15),
-      //title: Text('${item.title.toString()}'),
       title: Text('${item.title}'),
       leading: CircleAvatar(
         radius: 25,
         backgroundColor: Colors.deepPurple,
-        /* backgroundImage: NetworkImage(
-         item.imageUrl,
-        ),*/
       ),
       subtitle: Text('${item.price}'),
       trailing: IconButton(
@@ -29,7 +25,7 @@ class Item extends StatelessWidget {
         onPressed: () {
           // print(item.itemId);
           cart
-              .addItem(item.itemId, double.parse(item.price), item.title,)
+              .addItemToEdit(item.itemId, double.parse(item.price), item.title)
               .then((value) => cart.fetchCartItem());
           Scaffold.of(context).hideCurrentSnackBar();
           Scaffold.of(context).showSnackBar(
@@ -41,8 +37,9 @@ class Item extends StatelessWidget {
               action: SnackBarAction(
                 label: 'UNDO',
                 onPressed: () {
-                  cart.removeSingleItem(item.itemId);
-                  cart.fetchCartItem();
+                  cart
+                      .removeSingleItem(item.itemId)
+                      .then((value) => cart.fetchCartItem());
                 },
               ),
             ),

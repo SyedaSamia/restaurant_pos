@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:point_of_sale6/providers/cart_provider.dart';
+import 'package:point_of_sale6/utils/size_config.dart';
+import 'package:point_of_sale6/widgets/badge.dart';
+import 'package:point_of_sale6/widgets/main_drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurantpos/providers/cart_provider.dart';
-import 'package:restaurantpos/utils/size_config.dart';
-import 'package:restaurantpos/widgets/badge.dart';
-import 'package:restaurantpos/widgets/main_drawer.dart';
 
 import 'tab_screens/category_screen.dart';
 import 'tab_screens/item_screen.dart';
