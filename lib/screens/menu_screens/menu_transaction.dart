@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:point_of_sale6/widgets/main_drawer.dart';
+import 'package:restaurantpos/widgets/main_drawer.dart';
 
 class Transaction extends StatelessWidget {
   static const routeName = '/transactions';

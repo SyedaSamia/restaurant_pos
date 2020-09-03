@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:point_of_sale6/providers/cart_provider.dart';
-import 'package:point_of_sale6/providers/order_staging_provider.dart';
-import 'package:point_of_sale6/utils/size_config.dart';
-import 'package:point_of_sale6/widgets/main_drawer.dart';
-import 'package:point_of_sale6/widgets/order_staging_widgets/staging_order_item.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/providers/order_staging_provider.dart';
+import 'package:restaurantpos/utils/size_config.dart';
+import 'package:restaurantpos/widgets/main_drawer.dart';
+import 'package:restaurantpos/widgets/order_staging_widgets/staging_order_item.dart';
 
 import '../home.page.dart';
 

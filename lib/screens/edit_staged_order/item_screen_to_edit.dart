@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:point_of_sale6/providers/cart_provider.dart';
-import 'package:point_of_sale6/providers/order_staging_provider.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/point_of_sale6/lib/screens/edit_staged_order/edit_cart_item_screen.dart';
-import 'package:point_of_sale6/screens/tab_screens/item_screen.dart';
-import 'package:point_of_sale6/utils/size_config.dart';
-import 'package:point_of_sale6/widgets/badge.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/screens/tab_screens/item_screen.dart';
+import 'package:restaurantpos/utils/size_config.dart';
+import 'package:restaurantpos/widgets/badge.dart';
 import '../menu_screens/menu_cart.dart';
+import 'edit_cart_item_screen.dart';
 
 class EditItemScreen extends StatelessWidget {
   static const routeName = '/editItem';

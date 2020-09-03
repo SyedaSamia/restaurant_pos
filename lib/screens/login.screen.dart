@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:point_of_sale6/providers/auth.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/auth.dart';
 import 'home.page.dart';
 
 enum AuthMode { Login }

@@ -25,14 +25,14 @@ class ItemProvider with ChangeNotifier {
   });
 
   factory ItemProvider.fromJson(Map<String, String> json) => ItemProvider(
-        itemId: json["item_id"],
-        title: json["description"],
-        price: json["price"],
-      );
+    itemId: json["item_id"],
+    title: json["description"],
+    price: json["price"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "item_id": itemId,
-        "description": title,
-        "price": price,
-      };
+    "item_id": itemId,
+    "description": title,
+    "price": price,
+  };
 }

@@ -1,10 +1,9 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:point_of_sale6/providers/items_provider.dart';
-import 'package:point_of_sale6/widgets/item/item.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:restaurantpos/providers/items_provider.dart';
 
 import 'edit_item.dart';
 
@@ -46,20 +45,20 @@ class _ItemScreenState extends State<ItemScreen> {
 
     return _isLoading
         ? Center(
-      child: CircularProgressIndicator(
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
-    )
+            child: CircularProgressIndicator(
+              backgroundColor: Theme.of(context).primaryColor,
+            ),
+          )
         : Container(
-      padding: EdgeInsets.only(top: 15),
-      child: ListView.separated(
-        itemCount: items.length,
-        itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
-          value: items[i],
-          child: EditItem(),
-        ),
-        separatorBuilder: (context, index) => Divider(),
-      ),
-    );
+            padding: EdgeInsets.only(top: 15),
+            child: ListView.separated(
+              itemCount: items.length,
+              itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
+                value: items[i],
+                child: EditItem(),
+              ),
+              separatorBuilder: (context, index) => Divider(),
+            ),
+          );
   }
 }

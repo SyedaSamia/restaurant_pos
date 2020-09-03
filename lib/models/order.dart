@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:point_of_sale6/providers/cart_provider.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
 
 class OrderModel {
   final String orderRef;

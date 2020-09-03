@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:point_of_sale6/providers/auth.dart';
-import 'package:point_of_sale6/providers/cart_provider.dart';
-import 'package:point_of_sale6/providers/categories_provider.dart';
-import 'package:point_of_sale6/providers/checkout_provider.dart';
-import 'package:point_of_sale6/providers/items_provider.dart';
-import 'package:point_of_sale6/providers/order_staging_provider.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/point_of_sale6/lib/screens/edit_staged_order/edit_cart_item_screen.dart';
-import 'package:point_of_sale6/screens/home.page.dart';
-import 'file:///H:/AndroidStudio/flutter/Professional/sns/pos_app/point_of_sale6/lib/screens/edit_staged_order/item_screen_to_edit.dart';
-import 'package:point_of_sale6/screens/login.screen.dart';
-import 'package:point_of_sale6/screens/menu_screens/menu_cart.dart';
-import 'package:point_of_sale6/screens/menu_screens/menu_checkout.dart';
-import 'package:point_of_sale6/screens/menu_screens/menu_transaction.dart';
-import 'package:point_of_sale6/screens/menu_screens/order_staging_screen.dart';
-import 'package:point_of_sale6/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/auth.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/providers/categories_provider.dart';
+import 'package:restaurantpos/providers/checkout_provider.dart';
+import 'package:restaurantpos/providers/items_provider.dart';
+import 'package:restaurantpos/screens/edit_staged_order/edit_cart_item_screen.dart';
+import 'package:restaurantpos/screens/edit_staged_order/item_screen_to_edit.dart';
+import 'package:restaurantpos/screens/home.page.dart';
+import 'package:restaurantpos/screens/login.screen.dart';
+import 'package:restaurantpos/screens/menu_screens/menu_cart.dart';
+import 'package:restaurantpos/screens/menu_screens/menu_checkout.dart';
+import 'package:restaurantpos/screens/menu_screens/menu_transaction.dart';
+import 'package:restaurantpos/screens/menu_screens/order_staging_screen.dart';
+import 'package:restaurantpos/screens/splash_screen.dart';
 import 'package:syncfusion_flutter_core/core.dart';
 import 'models/category.dart';
 import 'models/item_provider.dart';
+import 'package:restaurantpos/providers/order_staging_provider.dart';
 
 /*TODO- showing selected staged order in cart, edit from cart. then update in database with sql query. after that show updated staged order in prev staged order
 *

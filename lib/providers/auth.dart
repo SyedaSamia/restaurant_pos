@@ -144,7 +144,7 @@ String get token {
     prefs.clear();
   }
 
-  /*void _autoLogout() {
+/*void _autoLogout() {
     if (_authTimer != null) {
       _authTimer.cancel();
     }

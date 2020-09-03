@@ -2,9 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:point_of_sale6/helpers/db_helper.dart';
-import 'package:point_of_sale6/models/order.dart';
-import 'package:provider/provider.dart';
+import 'package:restaurantpos/helpers/db_helper.dart';
+import 'package:restaurantpos/models/order.dart';
 import 'cart_provider.dart';
 
 //Checkout + Order
@@ -18,10 +17,10 @@ class CheckoutItemProvider {
 
   CheckoutItemProvider(
       {@required this.id,
-      @required this.amount,
-      @required this.products,
-      @required this.dateTime,
-      @required this.vat});
+        @required this.amount,
+        @required this.products,
+        @required this.dateTime,
+        @required this.vat});
 }
 
 class CheckoutProvider with ChangeNotifier {
@@ -81,9 +80,9 @@ class CheckoutProvider with ChangeNotifier {
       String stagingOrderId, double total, double vat) async {
     //retrieving data from staging_order table with id
     final dataList =
-        await DBHelper.getDataWithId('staging_orders', stagingOrderId, 'id');
+    await DBHelper.getDataWithId('staging_orders', stagingOrderId, 'id');
     print('printing datalist from checkout ${dataList.toList()}');
-    var newFormat = DateFormat("dd/MM/yyyy hh:mm");
+    var newFormat = DateFormat("dd-MM-yyyy hh:mm a");
 
     //inserting retrieved data to order table
     DBHelper.insert('orders', {
@@ -96,7 +95,7 @@ class CheckoutProvider with ChangeNotifier {
 
     //retrieving data from staging_items table with id
     final dataListItems =
-        await DBHelper.queryStagingOrderItem(stagingOrderId, 'staging_items');
+    await DBHelper.queryStagingOrderItem(stagingOrderId, 'staging_items');
 
     //inserting retrieved data to order_items table
     for (int i = 0; i < dataListItems.length; i++) {
@@ -137,10 +136,11 @@ class CheckoutProvider with ChangeNotifier {
 
   Future<void> updateCheckoutOrderToServer(String _userId) async {
     // List<CheckoutItemProvider> orderItems;
+    var newFormat = DateFormat("dd-MM-yyyy hh:mm a");
     try {
       final url = 'https://posrestaurant-simchang.firebaseio.com/orders.json';
 
-      final timestamp = DateTime.now();
+      //final timestamp = DateTime.now();
       _orders.map((e) {
         http.post(url,
             body: json.encode({
@@ -148,14 +148,15 @@ class CheckoutProvider with ChangeNotifier {
               "order_ref": '${e.orderRef}',
               "order_list": e.products
                   .map((cp) => {
-                        'title': '${cp.title}',
-                        'quantity': '${cp.quantity}',
-                        'price': '${cp.price}',
-                      })
+                'title': '${cp.title}',
+                'quantity': '${cp.quantity}',
+                'price': '${cp.price}',
+              })
                   .toList(),
               "total_price": '${e.totalAmount}',
               "restaurant_id": '1',
               "order_date": '${e.orderDate}',
+              'update_date': newFormat.format(DateTime.now()).toString(),
               "vat": '${e.vat}'
             }));
       }).toList();
@@ -165,37 +166,4 @@ class CheckoutProvider with ChangeNotifier {
       throw (error);
     }
   }
-
-  /* Future<void> updateCheckoutOrderToServer() async {
-    // List<CheckoutItemProvider> orderItems;
-    final url =
-        'https://posrestaurant-simchang.firebaseio.com/orders.json?auth=$authToken';
-    //final timestamp = DateTime.now();
-    final response = await http.post(
-      url,
-      body: json.encode({
-        'order_id': _orders.
-            .map((cp) => {
-                  'id': cp.id,
-                  'title': cp.title,
-                  'quantity': cp.quantity,
-                  'price': cp.price,
-          'total': c
-                })
-            .toList(),
-      }),
-    );
-    _orders.insert(
-      0,
-      CheckoutItemProvider(
-        id: json.decode(response.body)['name'],
-        amount: total,
-        dateTime: timestamp,
-        products: cartProducts,
-      ),
-    );
-    notifyListeners();
-  }
-*/
-
 }

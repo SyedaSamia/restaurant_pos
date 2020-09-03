@@ -1,10 +1,10 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:point_of_sale6/providers/items_provider.dart';
-import 'package:point_of_sale6/widgets/item/item.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:restaurantpos/providers/items_provider.dart';
+import 'package:restaurantpos/widgets/item/item.dart';
 
 class ItemScreen extends StatefulWidget {
   @override

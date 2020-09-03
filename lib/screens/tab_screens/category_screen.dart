@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:point_of_sale6/providers/categories_provider.dart';
-import 'package:point_of_sale6/widgets/category/category.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/categories_provider.dart';
+import 'package:restaurantpos/widgets/category/category.dart';
 
 class CategoryScreen extends StatefulWidget {
   @override

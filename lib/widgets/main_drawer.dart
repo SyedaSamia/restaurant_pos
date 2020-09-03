@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:point_of_sale6/providers/auth.dart';
-import 'package:point_of_sale6/providers/cart_provider.dart';
-import 'package:point_of_sale6/providers/checkout_provider.dart';
-import 'package:point_of_sale6/providers/order_staging_provider.dart';
-import 'package:point_of_sale6/screens/home.page.dart';
-import 'package:point_of_sale6/screens/menu_screens/order_staging_screen.dart';
 import 'package:provider/provider.dart';
-
-import 'dialogs/logout_dialog.dart';
+import 'package:restaurantpos/providers/auth.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/providers/checkout_provider.dart';
+import 'package:restaurantpos/providers/order_staging_provider.dart';
+import 'package:restaurantpos/screens/home.page.dart';
+import 'package:restaurantpos/screens/menu_screens/order_staging_screen.dart';
+import 'package:restaurantpos/widgets/dialogs/logout_dialog.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
@@ -156,7 +155,7 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
-  /*_showCheckoutDialog(BuildContext context) {
+/*_showCheckoutDialog(BuildContext context) {
     AlertDialog();
   }*/
 }

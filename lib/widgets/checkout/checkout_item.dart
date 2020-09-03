@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
 
 class CheckoutItem extends StatelessWidget {
   final String id;
@@ -8,11 +9,11 @@ class CheckoutItem extends StatelessWidget {
   final String title;
 
   CheckoutItem(
-    this.id,
-    this.price,
-    this.quantity,
-    this.title,
-  );
+      this.id,
+      this.price,
+      this.quantity,
+      this.title,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -62,3 +63,4 @@ class CheckoutItem extends StatelessWidget {
     );*/
   }
 }
+

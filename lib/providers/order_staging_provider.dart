@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:point_of_sale6/helpers/db_helper.dart';
+import 'package:restaurantpos/helpers/db_helper.dart';
 import 'cart_provider.dart';
 
 class OrderStagingItemProvider {
@@ -12,10 +12,10 @@ class OrderStagingItemProvider {
 
   OrderStagingItemProvider(
       {@required this.id,
-      @required this.amount,
-      @required this.products,
-      @required this.dateTime,
-      @required this.vat});
+        @required this.amount,
+        @required this.products,
+        @required this.dateTime,
+        @required this.vat});
 
   Map<String, dynamic> toMap() {
     return {'id': id, 'amount': amount, 'vat': vat, 'dateTime': dateTime};
@@ -60,7 +60,7 @@ class OrderStagingProvider with ChangeNotifier {
   Future<void> findOrder(String id) async {
     _currentOrderId = id;
     final dataList =
-        await DBHelper.getDataWithId('staging_orders', _currentOrderId, 'id');
+    await DBHelper.getDataWithId('staging_orders', _currentOrderId, 'id');
     /*  print(
         'length of datalist after pressing checkout: length ${dataList.length} id: ${dataList[0]['id']}');*/
     _currentCheckoutOrdersCount = dataList.length;
@@ -68,7 +68,7 @@ class OrderStagingProvider with ChangeNotifier {
     _totalCheckoutVat = double.parse(dataList[0]['vat']);
 
     final dataListItems =
-        await DBHelper.queryStagingOrderItem(id, 'staging_items');
+    await DBHelper.queryStagingOrderItem(id, 'staging_items');
     _currentCheckoutItemsCount = dataListItems.length;
     for (int i = 0; i < _currentCheckoutItemsCount; i++) {
       print(
@@ -100,7 +100,7 @@ class OrderStagingProvider with ChangeNotifier {
   Future<void> addStagingOrderFromCart(List<CartItemProvider> cartItems,
       double total, double vat, String cartId) async {
     bool _isContain =
-        await DBHelper.checkIdContainsInTable('staging_orders', cartId, 'id');
+    await DBHelper.checkIdContainsInTable('staging_orders', cartId, 'id');
     print('false = not contain, true = contains > $_isContain ');
     if (_isContain == false) {
       var newFormat = DateFormat("yy-MM-dd");
@@ -168,7 +168,7 @@ class OrderStagingProvider with ChangeNotifier {
   //shows selected staging orders in cart
   Future<void> editStagingOrder(String _id) async {
     bool _isContain =
-        await DBHelper.checkIdContainsInTable('cart_items', _id, 'itemId');
+    await DBHelper.checkIdContainsInTable('cart_items', _id, 'itemId');
     print('false = not contain, true = contains > $_isContain ');
     if (_isContain == true) {
       DBHelper.removeAllRows('cart_items');

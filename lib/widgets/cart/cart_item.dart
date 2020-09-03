@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:point_of_sale6/providers/cart_provider.dart';
-import 'package:point_of_sale6/utils/size_config.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/utils/size_config.dart';
 
 class CartItem extends StatelessWidget {
   final String id;

@@ -2,16 +2,16 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:point_of_sale6/providers/checkout_provider.dart';
-import 'package:point_of_sale6/providers/order_staging_provider.dart';
-import 'package:point_of_sale6/screens/tab_screens/item_screen.dart';
-import 'package:point_of_sale6/utils/size_config.dart';
-import 'package:point_of_sale6/widgets/checkout/checkout_item.dart';
-import 'package:point_of_sale6/widgets/main_drawer.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
+import 'package:restaurantpos/providers/categories_provider.dart';
+import 'package:restaurantpos/providers/checkout_provider.dart';
+import 'package:restaurantpos/providers/order_staging_provider.dart';
+import 'package:restaurantpos/utils/size_config.dart';
+import 'package:restaurantpos/widgets/checkout/checkout_item.dart';
+import 'package:restaurantpos/widgets/main_drawer.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 import '../home.page.dart';
@@ -141,11 +141,6 @@ class Checkout extends StatelessWidget {
                           ),
                         ])),
           ),
-          /*: Container(
-                  child: Center(
-                    child: Text('Please Wait...'),
-                  ),
-                )*/
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: _floatingActionButton),
@@ -159,11 +154,6 @@ class Checkout extends StatelessWidget {
 
     //Create a border
     PdfBorders border = PdfBorders(
-/*        left: PdfPen(PdfColor(240, 0, 0), width: 2),
-        top: PdfPen(PdfColor(0, 240, 0), width: 3),
-        bottom: PdfPen(PdfColor(0, 0, 240), width: 4),
-        right: PdfPen(PdfColor(240, 100, 240), width: 5)
-    */
         left: PdfPen(PdfColor(240, 240, 240), width: 2),
         top: PdfPen(PdfColor(240, 240, 240), width: 3),
         bottom: PdfPen(PdfColor(240, 240, 240), width: 4),
@@ -192,7 +182,7 @@ class Checkout extends StatelessWidget {
       backgroundBrush: PdfBrushes.white,
       textPen: PdfPens.black,
       textBrush: PdfBrushes.white,
-      font: PdfStandardFont(PdfFontFamily.timesRoman, 17),
+      font: PdfStandardFont(PdfFontFamily.zapfDingbats, 17),
     );
     final PdfPage page = document.pages.add();
     PdfGrid grid = PdfGrid();

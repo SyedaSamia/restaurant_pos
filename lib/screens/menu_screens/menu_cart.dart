@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:point_of_sale6/providers/cart_provider.dart';
-import 'package:point_of_sale6/providers/order_staging_provider.dart';
-import 'package:point_of_sale6/utils/size_config.dart';
-import 'package:point_of_sale6/widgets/cart/cart_item.dart';
-import 'package:point_of_sale6/widgets/main_drawer.dart';
-import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurantpos/providers/cart_provider.dart';
+import 'package:restaurantpos/providers/order_staging_provider.dart';
+import 'package:restaurantpos/utils/size_config.dart';
+import 'package:restaurantpos/widgets/cart/cart_item.dart';
+import 'package:restaurantpos/widgets/main_drawer.dart';
 
 import 'order_staging_screen.dart';
 
@@ -172,7 +171,6 @@ class _CartState extends State<Cart> {
                         onChanged: (newValue) {
                           setState(() {
                             _checkedValue = newValue;
-                            //cart.changeCheckVat(_checkedValue);
                           });
                         },
                         controlAffinity: ListTileControlAffinity.leading,

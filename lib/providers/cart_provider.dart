@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:point_of_sale6/helpers/db_helper.dart';
+import 'package:restaurantpos/helpers/db_helper.dart';
 
 class CartItemProvider {
   final String id; //cart_id

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:point_of_sale6/providers/auth.dart';
-import 'package:point_of_sale6/providers/checkout_provider.dart';
-import 'package:point_of_sale6/utils/size_config.dart';
-import 'package:point_of_sale6/widgets/main_drawer.dart';
-import 'package:point_of_sale6/widgets/order/checkout_order_item.dart';
 import 'package:provider/provider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import '../menu_screens/menu_cart.dart';
+import 'package:restaurantpos/providers/auth.dart';
+import 'package:restaurantpos/providers/checkout_provider.dart';
+import 'package:restaurantpos/utils/size_config.dart';
+import 'package:restaurantpos/widgets/main_drawer.dart';
+import 'package:restaurantpos/widgets/order/checkout_order_item.dart';
 
 class OrderScreen extends StatelessWidget {
   static const routeName = '/order';
