@@ -53,7 +53,7 @@ class CartProvider with ChangeNotifier {
       _items.forEach((key, cartItem) {
         total += cartItem.price * cartItem.quantity;
       });
-      var vat = total * 0.15;
+      var vat = (total * 15) / 100;
       return vat;
     } else
       return 0.00;
@@ -212,6 +212,7 @@ class CartProvider with ChangeNotifier {
 
   Future<void> addSingleItem(String productId) async {
     if (!_items.containsKey(productId)) {
+      print('!_items.containsKey(productId)');
       return;
     }
     int qty =
@@ -228,6 +229,8 @@ class CartProvider with ChangeNotifier {
         quantity: existingCartItem.quantity + 1,
       ),
     );
+    print(">>> ${_items.length}");
+    // for (int i = 0; i < _items.length; i++) print(_items.values.toList());
     notifyListeners();
   }
 

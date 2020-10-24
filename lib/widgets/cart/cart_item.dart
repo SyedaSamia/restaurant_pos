@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:restaurantpos/utils/size_config.dart';
 
-class CartItem extends StatelessWidget {
+class CartItem extends StatefulWidget {
   final String id;
   final String productId;
   final double price;
@@ -19,11 +19,18 @@ class CartItem extends StatelessWidget {
   );
 
   @override
+  _CartItemState createState() => _CartItemState();
+}
+
+class _CartItemState extends State<CartItem> {
+  @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    final cart = Provider.of<CartProvider>(context, listen: false);
+    final cart = Provider.of<CartProvider>(
+      context, /*listen: false*/
+    );
     return Dismissible(
-      key: ValueKey(productId),
+      key: ValueKey(widget.productId),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -63,7 +70,7 @@ class CartItem extends StatelessWidget {
                 ));
       },
       onDismissed: (direction) {
-        cart.removeItem(productId);
+        cart.removeItem(widget.productId);
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -80,13 +87,13 @@ class CartItem extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(5),
                     child: FittedBox(
-                      child: Text('$quantity x'),
+                      child: Text('${widget.quantity} x'),
                     ),
                   ),
                 ),
-                title: Text(title),
-                subtitle: Text('$price tk'),
-                trailing: Text('Total: \$${(price * quantity)}'),
+                title: Text(widget.title),
+                subtitle: Text('${widget.price} tk'),
+                trailing: Text('Total: \$${(widget.price * widget.quantity)}'),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -99,12 +106,21 @@ class CartItem extends StatelessWidget {
                       Icons.add,
                       color: Theme.of(context).primaryColor,
                     ),
-                    onPressed: () => cart.addSingleItem(productId),
+                    onPressed: () {
+                      setState(() {
+                        print(
+                            'productId in cartItem to increase qty ${widget.productId}');
+                        cart.addSingleItem(widget.productId);
+                      });
+                      //quantity
+                    },
                   ),
                   IconButton(
                     icon: Icon(Icons.remove,
                         color: Theme.of(context).primaryColor),
-                    onPressed: () => cart.removeSingleItem(productId),
+                    onPressed: () => setState(() {
+                      cart.removeSingleItem(widget.productId);
+                    }),
                   )
                 ],
               )

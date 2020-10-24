@@ -19,15 +19,15 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
-    final cart = Provider.of<CartProvider>(context);
+    final cart = Provider.of<CartProvider>(context, listen: false);
     final vm = Provider.of<OrderStagingProvider>(context, listen: false);
     bool _checkedValue = false;
     void _yesDialogFunctionality(context) {
+      cart.changeCheckVat(_checkedValue);
       vm
           .addStagingOrderFromCart(cart.items.values.toList(), cart.totalAmount,
               cart.totalVat, DateTime.now().toString())
           .then((value) {
-        cart.changeCheckVat(_checkedValue);
         vm.fetchAndSetStagedOrders();
         cart.clear();
       });
