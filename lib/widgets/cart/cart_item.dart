@@ -4,17 +4,19 @@ import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:restaurantpos/utils/size_config.dart';
 
 class CartItem extends StatefulWidget {
+  final int i;
   final String id;
   final String productId;
-  final double price;
-  final int quantity;
+  // final double price;
+  // final int quantity;
   final String title;
 
   CartItem(
+    this.i,
     this.id,
     this.productId,
-    this.price,
-    this.quantity,
+    //  this.price,
+    //  this.quantity,
     this.title,
   );
 
@@ -87,13 +89,16 @@ class _CartItemState extends State<CartItem> {
                   child: Padding(
                     padding: EdgeInsets.all(5),
                     child: FittedBox(
-                      child: Text('${widget.quantity} x'),
+                      child: Text(
+                          '${cart.items.values.toList()[widget.i].quantity} x'),
                     ),
                   ),
                 ),
                 title: Text(widget.title),
-                subtitle: Text('${widget.price} tk'),
-                trailing: Text('Total: \$${(widget.price * widget.quantity)}'),
+                subtitle:
+                    Text('${cart.items.values.toList()[widget.i].price} tk'),
+                trailing: Text(
+                    'Total: \$${(cart.items.values.toList()[widget.i].price * cart.items.values.toList()[widget.i].quantity)}'),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
