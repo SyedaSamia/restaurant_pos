@@ -1,8 +1,9 @@
-import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
+
+import '../providers/cart_provider.dart';
 
 /*
 * TODO- showing staging orders from mbl store-> confirm staging order and remove from mbl store
@@ -24,13 +25,13 @@ class DBHelper {
 
   //create staging order table
   static final _createStagingOrderTable =
-      'CREATE TABLE staging_orders(id TEXT PRIMARY KEY, total_amount TEXT, date_time TEXT, vat TEXT)';
+      'CREATE TABLE staging_orders(id TEXT PRIMARY KEY, total_amount TEXT, date_time TEXT, vat TEXT, discount Text, discount_percentage INTEGER)';
   static final _createStagingOrderItemsTable =
       'CREATE TABLE staging_items(id TEXT, itemId TEXT, title TEXT, quantity TEXT, price TEXT)';
 
   //create order table
   static final _createOrderTable =
-      'CREATE TABLE orders(order_ref TEXT PRIMARY KEY, waiter_id TEXT, restaurant_id TEXT, total_amount TEXT, order_date TEXT)';
+      'CREATE TABLE orders(order_ref TEXT PRIMARY KEY, waiter_id TEXT, restaurant_id TEXT, total_amount TEXT, order_date TEXT, vat Text, discount Text)';
   static final _createOrderItemsTable =
       'CREATE TABLE order_items(id TEXT, item_id TEXT, title TEXT, quantity TEXT, price TEXT)';
 
@@ -71,6 +72,15 @@ class DBHelper {
         await db.rawQuery('SELECT * FROM $table WHERE $column= ?', ["$id"]);
     return queryResult;
   }
+  /*static Future<String> getDataWithId(
+      String table, String id, String column) async {
+    final db = await DBHelper.database();
+    var queryResult =
+        await db.rawQuery('SELECT * FROM $table WHERE id= ?', ["$id"]);
+    // await db.rawQuery('SELECT $column FROM $table WHERE id= ?', ["$id"]);
+    String _result = queryResult[0]['$column'];
+    return _result;
+  }*/
 
   //checks if a table contains certain 'id'
   static Future<bool> checkIdContainsInTable(

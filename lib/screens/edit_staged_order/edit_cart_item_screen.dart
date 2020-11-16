@@ -14,11 +14,20 @@ class EditCart extends StatelessWidget {
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
     final vm = Provider.of<OrderStagingProvider>(context);
+    bool _checkedValue = false;
+
+    TextEditingController discountController = new TextEditingController();
+    bool _percentageDiscountChecked = false;
 
     void _yesDialogFunctionality(context) {
       vm
-          .addStagingOrderFromCart(cart.items.values.toList(), cart.totalAmount,
-              cart.totalVat, cart.carrStagedOrderId)
+          .addStagingOrderFromCart(
+              cart.items.values.toList(),
+              cart.totalAmount,
+              cart.totalVat,
+              vm.currentDiscountAmount,
+              vm.discountPercentageOn,
+              cart.carrStagedOrderId)
           .then((value) {
         vm.fetchAndSetStagedOrders();
         cart.clear();
@@ -116,18 +125,6 @@ class EditCart extends StatelessWidget {
       ),
       onPressed: () {
         _showDialog(context);
-
-        /*(cart.totalAmount != 0)
-            ? _showDialog(context)
-            : Fluttertoast.showToast(
-                msg: "Empty Cart! Please add items to stage order",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-                // timeInSecForIosWeb: 1,
-                backgroundColor: Colors.blueGrey,
-                textColor: Colors.white,
-                fontSize: 16.0);
-    */
       },
     );
 
@@ -164,32 +161,101 @@ class EditCart extends StatelessWidget {
         body: (cart.items.length > 0)
             ? Column(
                 children: <Widget>[
-                  Card(
-                    margin: EdgeInsets.all(25),
-                    child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              'Total',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Spacer(),
-                            Chip(
-                              label: Text(
-                                '\$${(cart.totalAmount - cart.totalVat).toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  color: Theme.of(context)
-                                      .primaryTextTheme
-                                      .title
-                                      .color,
-                                ),
-                              ),
-                              backgroundColor: Theme.of(context).primaryColor,
-                            ),
-                          ],
+                  /*  */ /*
+                    * Vat Option
+                    *
+                    * */ /*
+                  StatefulBuilder(
+                      builder: (BuildContext ctx, StateSetter setState) {
+                    return Container(
+                      */ /* width: SizeConfig.blockSizeHorizontal * 30,
+                        height: SizeConfig.blockSizeVertical * 5,*/ /*
+                      child: CheckboxListTile(
+                        title: Text('Add Vat(15%)'),
+                        activeColor: Colors.blue,
+                        value: _checkedValue,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _checkedValue = newValue;
+                          });
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                    );
+                  }),
+                  */ /*
+                    * Discount Option starts
+                    *
+                    * */ /*
+                  Row(children: [
+                    StatefulBuilder(
+                        builder: (BuildContext ctx, StateSetter setState) {
+                      return Container(
+                        width: SizeConfig.blockSizeHorizontal * 55,
+                        height: SizeConfig.blockSizeVertical * 5,
+                        child: CheckboxListTile(
+                          title: Text('Discount (%)'),
+                          activeColor: Colors.blue,
+                          value: _percentageDiscountChecked,
+                          onChanged: (newValue) {
+                            setState(() {
+                              _percentageDiscountChecked = newValue;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ),
+                      );
+                    }),
+                    */ /*   Switch(
+                                value: _percentageCheckedValue,
+                                onChanged: (newValue) {
+                                  _percentageCheckedValue = newValue;
+                                },
+                                activeTrackColor: Colors.blue,
+                                activeColor: Colors.deepPurple,
+                              ),*/ /*
+                    Container(
+                        width: SizeConfig.blockSizeHorizontal * 30,
+                        height: SizeConfig.blockSizeVertical * 5,
+                        child: TextFormField(
+                          controller: discountController,
+                          decoration: InputDecoration(
+                              hintText: 'Enter discount amount'),
                         )),
+                  ]),
+
+                  */ /*Discount option ends*/ /*
+*/
+                  Container(
+                    padding:
+                        EdgeInsets.only(top: SizeConfig.blockSizeVertical * 2),
+                    child: Card(
+                      margin: EdgeInsets.all(25),
+                      child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Total',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Spacer(),
+                              Chip(
+                                label: Text(
+                                  '\$${(cart.totalAmount).toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .primaryTextTheme
+                                        .title
+                                        .color,
+                                  ),
+                                ),
+                                backgroundColor: Theme.of(context).primaryColor,
+                              ),
+                            ],
+                          )),
+                    ),
                   ),
                   SizedBox(height: 10),
                   Expanded(

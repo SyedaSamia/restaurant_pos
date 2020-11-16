@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:restaurantpos/providers/order_staging_provider.dart' as ord;
-import 'package:flutter/material.dart';
-import 'package:restaurantpos/screens/edit_staged_order/edit_cart_item_screen.dart';
-import 'package:restaurantpos/screens/menu_screens/menu_checkout.dart';
-import 'package:restaurantpos/utils/size_config.dart';
+
+import '../../screens/edit_staged_order/edit_cart_item_screen.dart';
+import '../../screens/menu_screens/menu_checkout.dart';
+import '../../utils/size_config.dart';
 
 class StagingOrderItem extends StatefulWidget {
   final ord.OrderStagingItemProvider order;
@@ -27,7 +28,7 @@ class _StagingOrderItemState extends State<StagingOrderItem> {
       showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            // backgroundColor: Colors.transparent,
+              // backgroundColor: Colors.transparent,
               elevation: 0.0,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
@@ -91,7 +92,7 @@ class _StagingOrderItemState extends State<StagingOrderItem> {
                             onPressed: () {
                               Navigator.of(context).pop();
                               stagingOrder.deleteStagingOrder(id).then(
-                                      (value) =>
+                                  (value) =>
                                       stagingOrder.fetchAndSetStagedOrders());
                             },
                           ),
@@ -134,7 +135,7 @@ class _StagingOrderItemState extends State<StagingOrderItem> {
                           .editStagingOrder(widget.order.id)
                           .then((value) => cart.fetchCartItem())
                           .then((value) => Navigator.of(context)
-                          .pushNamed(EditCart.routeName));
+                              .pushNamed(EditCart.routeName));
                     },
                   ),
                   IconButton(
@@ -160,4 +161,3 @@ class _StagingOrderItemState extends State<StagingOrderItem> {
     );
   }
 }
-

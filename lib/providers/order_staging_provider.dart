@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:restaurantpos/helpers/db_helper.dart';
+import '../helpers/db_helper.dart';
+import '../helpers/db_helper.dart';
 import 'cart_provider.dart';
 
 class OrderStagingItemProvider {
@@ -12,10 +13,10 @@ class OrderStagingItemProvider {
 
   OrderStagingItemProvider(
       {@required this.id,
-        @required this.amount,
-        @required this.products,
-        @required this.dateTime,
-        @required this.vat});
+      @required this.amount,
+      @required this.products,
+      @required this.dateTime,
+      @required this.vat});
 
   Map<String, dynamic> toMap() {
     return {'id': id, 'amount': amount, 'vat': vat, 'dateTime': dateTime};
@@ -48,6 +49,30 @@ class OrderStagingProvider with ChangeNotifier {
   int _currentCheckoutItemsCount;
   int _currentCheckoutOrdersCount;
 
+  double _totalAmountToPrint;
+  double get totalAmountToPrint {
+    return _totalAmountToPrint;
+  }
+
+  double _currentDiscountAmount;
+  bool _discountPercentage;
+
+  double _currentDiscountToPrint;
+
+  double get currentDiscountToPrint {
+    print('current Discount amount after editing $_currentDiscountAmount');
+    return _currentDiscountToPrint;
+  }
+
+  double get currentDiscountAmount {
+    print('current Discount amount after editing $_currentDiscountAmount');
+    return _currentDiscountAmount;
+  }
+
+  bool get discountPercentageOn {
+    return _discountPercentage;
+  }
+
   int get currentCheckoutItemsCount {
     return _currentCheckoutItemsCount;
   }
@@ -60,16 +85,32 @@ class OrderStagingProvider with ChangeNotifier {
   Future<void> findOrder(String id) async {
     _currentOrderId = id;
     final dataList =
-    await DBHelper.getDataWithId('staging_orders', _currentOrderId, 'id');
+        await DBHelper.getDataWithId('staging_orders', _currentOrderId, 'id');
     /*  print(
         'length of datalist after pressing checkout: length ${dataList.length} id: ${dataList[0]['id']}');*/
+
+    var disPercentage;
+    double dis;
     _currentCheckoutOrdersCount = dataList.length;
     _totalCheckoutAmount = double.parse(dataList[0]['total_amount']);
     _totalCheckoutVat = double.parse(dataList[0]['vat']);
-
+    disPercentage = dataList[0]['discount_percentage'];
+    dis = double.parse(dataList[0]['discount']);
+    print(
+        'before total $_totalCheckoutAmount vat $_totalCheckoutVat currentDiscountToPrint $_currentDiscountToPrint');
+    if (disPercentage == 1) {
+      var fix = ((dis / 100) * _totalCheckoutAmount).toStringAsFixed(2);
+      _currentDiscountToPrint = double.parse(fix);
+      /* _currentDiscountToPrint =
+          _currentDiscountToPrint.toStringAsFixed(2) as double;*/
+    } else
+      _currentDiscountToPrint = dis;
+    print(
+        'after total $_totalCheckoutAmount vat $_totalCheckoutVat currentDiscountToPrint $_currentDiscountToPrint');
     final dataListItems =
-    await DBHelper.queryStagingOrderItem(id, 'staging_items');
+        await DBHelper.queryStagingOrderItem(id, 'staging_items');
     _currentCheckoutItemsCount = dataListItems.length;
+
     for (int i = 0; i < _currentCheckoutItemsCount; i++) {
       print(
           'current checkout items count $_currentCheckoutItemsCount = ${dataListItems[i].title}');
@@ -80,9 +121,10 @@ class OrderStagingProvider with ChangeNotifier {
           quantity: dataListItems[i].quantity,
           price: dataListItems[i].price));
     }
-
+    _totalAmountToPrint =
+        _totalCheckoutAmount + _totalCheckoutVat - _currentDiscountToPrint;
     notifyListeners();
-    print('current checkout items count $_currentCheckoutItemsCount ');
+    print('current checkout items count $_currentCheckoutItemsCount  ');
   }
 
   Future<void> deleteStagingOrder(String id) async {
@@ -97,10 +139,30 @@ class OrderStagingProvider with ChangeNotifier {
       return true;
   }
 
-  Future<void> addStagingOrderFromCart(List<CartItemProvider> cartItems,
-      double total, double vat, String cartId) async {
+  Future<void> addStagingOrderFromCart(
+      List<CartItemProvider> cartItems,
+      double total,
+      double vat,
+      double discount,
+      bool percentageOn,
+      String cartId) async {
+    var _discount = 0.0;
+    var _vat = 0.0;
+    //if discount percentage == true
+    if (percentageOn == true) {
+      _discount = (discount / 100) * total;
+      print(
+          'total = $total discount = $discount afterDiscount = ${total - _discount}');
+    } else
+      _discount = discount;
+
+    if (vat > 0) {
+      var fix = (((total - _discount) * 15) / 100).toStringAsFixed(2);
+      _vat = double.parse(fix);
+    }
+
     bool _isContain =
-    await DBHelper.checkIdContainsInTable('staging_orders', cartId, 'id');
+        await DBHelper.checkIdContainsInTable('staging_orders', cartId, 'id');
     print('false = not contain, true = contains > $_isContain ');
     if (_isContain == false) {
       var newFormat = DateFormat("yy-MM-dd");
@@ -109,7 +171,9 @@ class OrderStagingProvider with ChangeNotifier {
         'id': cartId,
         'total_amount': total,
         'date_time': newFormat.format(DateTime.now()).toString(), //only date
-        'vat': vat
+        'vat': _vat,
+        'discount': discount,
+        'discount_percentage': percentageOn == false ? 0 : 1
       });
       print('putting into id $cartId');
 
@@ -132,7 +196,9 @@ class OrderStagingProvider with ChangeNotifier {
         'id': cartId,
         'total_amount': total,
         'date_time': newFormat.format(DateTime.now()).toString(), //only date
-        'vat': vat
+        'vat': _vat,
+        'discount': discount,
+        'discount_percentage': percentageOn == false ? 0 : 1
       });
       print('putting into id $cartId');
 
@@ -151,51 +217,70 @@ class OrderStagingProvider with ChangeNotifier {
   Future<void> fetchAndSetStagedOrders() async {
     _stagingOrders = [];
     final dataList = await DBHelper.getData('staging_orders');
+    var total, percentage, discount, vat;
     for (int i = 0; i < dataList.length; i++) {
       String _id = dataList[i]['id'];
+      total = double.parse(dataList[i]['total_amount']);
+      vat = double.parse(dataList[i]['vat']);
+      discount = double.parse(dataList[i]['discount']);
       print(_id);
+      if (dataList[i]['discount_percentage'] == 1)
+        discount = (discount / 100) * total;
+      total = total + vat - discount;
       _stagingOrders.add(OrderStagingItemProvider(
           id: _id,
-          amount: double.parse(dataList[i]['total_amount']),
+          amount: total,
           dateTime: dataList[i]['date_time'],
           products: await DBHelper.queryStagingOrderItem(_id, 'staging_items'),
-          vat: double.parse(dataList[i]['vat'])));
+          vat: vat));
     }
     print('fetch&stagedOrders $_stagingOrders');
     notifyListeners();
+    print('editStagingOrder function in order_staging_provider ends');
   }
 
   //shows selected staging orders in cart
   Future<void> editStagingOrder(String _id) async {
+    print('editStagingOrder function in order_staging_provider starts');
     bool _isContain =
-    await DBHelper.checkIdContainsInTable('cart_items', _id, 'itemId');
+        await DBHelper.checkIdContainsInTable('cart_items', _id, 'itemId');
     print('false = not contain, true = contains > $_isContain ');
+
+    var _resultDiscount;
+    var _resultPercentageBool;
+
     if (_isContain == true) {
       DBHelper.removeAllRows('cart_items');
-      var _list = await DBHelper.queryStagingOrderItem(_id, 'staging_items');
-      //  print('staging_items = $_list');
-      for (int i = 0; i < _list.length; i++) {
-        DBHelper.insert('cart_items', {
-          'itemId': _list[i].itemId,
-          'id': _list[i].id,
-          'title': _list[i].title, //only date
-          'quantity': _list[i].quantity,
-          'price': _list[i].price
-        });
-      }
-    } else {
-      var _list = await DBHelper.queryStagingOrderItem(_id, 'staging_items');
-      //  print('staging_items = $_list');
-      for (int i = 0; i < _list.length; i++) {
-        DBHelper.insert('cart_items', {
-          'itemId': _list[i].itemId,
-          'id': _list[i].id,
-          'title': _list[i].title, //only date
-          'quantity': _list[i].quantity,
-          'price': _list[i].price
-        });
-      }
     }
+
+    var _list = await DBHelper.queryStagingOrderItem(_id, 'staging_items');
+    //  print('staging_items = $_list');
+
+    //update discount starts
+    print('update discount in editStagingOrder function starts');
+    _resultDiscount = await DBHelper.getDataWithId('staging_orders', _id, 'id');
+    _resultPercentageBool =
+        await DBHelper.getDataWithId('staging_orders', _id, 'id');
+
+    var fix = (_resultDiscount[0]['discount']).toStringAsFixed(2);
+    _currentDiscountAmount = double.parse(fix);
+    _discountPercentage =
+        _resultPercentageBool[0]['discount_percentage'] == 0 ? false : true;
+
+    print('update discount in editStagingOrder function ends');
+    //update discount ends
+
+    for (int i = 0; i < _list.length; i++) {
+      DBHelper.insert('cart_items', {
+        'itemId': _list[i].itemId,
+        'id': _list[i].id,
+        'title': _list[i].title, //only date
+        'quantity': _list[i].quantity,
+        'price': _list[i].price
+      });
+    }
+
+    notifyListeners();
   }
 
   List<CartItemProvider> _checkoutItem = [];

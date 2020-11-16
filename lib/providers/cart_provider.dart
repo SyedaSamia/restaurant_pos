@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:restaurantpos/helpers/db_helper.dart';
+
+import '../helpers/db_helper.dart';
 
 class CartItemProvider {
   final String id; //cart_id
@@ -27,6 +28,7 @@ class CartProvider with ChangeNotifier {
   String _carrStagedOrderId = '';
 
   void takeCurrentStagedOrderId(String _id) {
+    print('Hello from takeCurrentStagedOrderId function in cart_provider');
     _carrStagedOrderId = _id;
   }
 
@@ -64,11 +66,8 @@ class CartProvider with ChangeNotifier {
     _items.forEach((key, cartItem) {
       total += cartItem.price * cartItem.quantity;
     });
-    if (checkVat == true) {
-      var vat = totalVat;
-      return total + vat;
-    } else
-      return total;
+    notifyListeners();
+    return total;
   }
 
   var _checkVat = false;
@@ -139,6 +138,7 @@ class CartProvider with ChangeNotifier {
   }
 
   Future<void> fetchCartItem() async {
+    print('fetchCartItem function in cart_provider starts');
     final dataList = await DBHelper.getData('cart_items');
     print('dataList $dataList');
     for (int i = 0; i < dataList.length; i++) {
@@ -174,6 +174,7 @@ class CartProvider with ChangeNotifier {
       }
     }
     notifyListeners();
+    print('fetchCartItem function in cart_provider ends');
   }
 
   void removeItem(String productId) {

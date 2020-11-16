@@ -22,11 +22,20 @@ class _CartState extends State<Cart> {
     final cart = Provider.of<CartProvider>(context, listen: false);
     final vm = Provider.of<OrderStagingProvider>(context, listen: false);
     bool _checkedValue = false;
+    TextEditingController discountController = new TextEditingController();
+    bool _percentageDiscountChecked = false;
+    double _discount = 0.0;
+
     void _yesDialogFunctionality(context) {
       cart.changeCheckVat(_checkedValue);
       vm
-          .addStagingOrderFromCart(cart.items.values.toList(), cart.totalAmount,
-              cart.totalVat, DateTime.now().toString())
+          .addStagingOrderFromCart(
+              cart.items.values.toList(),
+              cart.totalAmount,
+              cart.totalVat,
+              _discount,
+              _percentageDiscountChecked,
+              DateTime.now().toString())
           .then((value) {
         vm.fetchAndSetStagedOrders();
         cart.clear();
@@ -162,6 +171,12 @@ class _CartState extends State<Cart> {
               ? Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    /*
+                    *
+                    * Vat option starts
+                    *
+                    * */
+
                     StatefulBuilder(
                         builder: (BuildContext ctx, StateSetter setState) {
                       return CheckboxListTile(
@@ -176,32 +191,82 @@ class _CartState extends State<Cart> {
                         controlAffinity: ListTileControlAffinity.leading,
                       );
                     }),
-                    Card(
-                      margin: EdgeInsets.symmetric(horizontal: 17),
-                      child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Total',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              Spacer(),
-                              Chip(
-                                label: Text(
-                                  '\$${(cart.totalAmount - cart.totalVat).toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    color: Theme.of(context)
-                                        .primaryTextTheme
-                                        .title
-                                        .color,
-                                  ),
-                                ),
-                                backgroundColor: Theme.of(context).primaryColor,
-                              ),
-                            ],
+
+                    /*
+                    *
+                    * Vat option ends
+                    *
+                    * */
+
+                    /*
+                    * Discount Option starts
+                    *
+                    * */
+                    Row(children: [
+                      StatefulBuilder(
+                          builder: (BuildContext ctx, StateSetter setState) {
+                        return Container(
+                          width: SizeConfig.blockSizeHorizontal * 55,
+                          height: SizeConfig.blockSizeVertical * 5,
+                          child: CheckboxListTile(
+                            title: Text('Discount (%)'),
+                            activeColor: Colors.blue,
+                            value: _percentageDiscountChecked,
+                            onChanged: (newValue) {
+                              setState(() {
+                                _percentageDiscountChecked = newValue;
+                              });
+                            },
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                        );
+                      }),
+                      Container(
+                          width: SizeConfig.blockSizeHorizontal * 30,
+                          height: SizeConfig.blockSizeVertical * 5,
+                          child: TextField(
+                            controller: discountController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(hintText: 'Amount'),
+                            onChanged: (value) {
+                              _discount = double.parse(discountController.text);
+                            },
                           )),
+                    ]),
+
+                    /*Discount option ends*/
+
+                    Container(
+                      padding: EdgeInsets.only(
+                          top: SizeConfig.blockSizeVertical * 2),
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal: 17),
+                        child: Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  'Total',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                Spacer(),
+                                Chip(
+                                  label: Text(
+                                    '\$${(cart.totalAmount).toStringAsFixed(2)}',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .primaryTextTheme
+                                          .title
+                                          .color,
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                ),
+                              ],
+                            )),
+                      ),
                     ),
                     /*  Container(
                       child: Row(

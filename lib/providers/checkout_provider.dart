@@ -17,10 +17,10 @@ class CheckoutItemProvider {
 
   CheckoutItemProvider(
       {@required this.id,
-        @required this.amount,
-        @required this.products,
-        @required this.dateTime,
-        @required this.vat});
+      @required this.amount,
+      @required this.products,
+      @required this.dateTime,
+      @required this.vat});
 }
 
 class CheckoutProvider with ChangeNotifier {
@@ -77,10 +77,10 @@ class CheckoutProvider with ChangeNotifier {
 
   //inserting selected stagingOrders into order table
   Future<void> addCheckoutOrder(
-      String stagingOrderId, double total, double vat) async {
+      String stagingOrderId, double total, double vat, double discount) async {
     //retrieving data from staging_order table with id
     final dataList =
-    await DBHelper.getDataWithId('staging_orders', stagingOrderId, 'id');
+        await DBHelper.getDataWithId('staging_orders', stagingOrderId, 'id');
     print('printing datalist from checkout ${dataList.toList()}');
     var newFormat = DateFormat("dd-MM-yyyy hh:mm a");
 
@@ -90,12 +90,13 @@ class CheckoutProvider with ChangeNotifier {
       'waiter_id': userId,
       'restaurant_id': '1',
       'total_amount': total,
+      'discount': discount,
       'order_date': newFormat.format(DateTime.now()).toString(), //only datevat
     });
 
     //retrieving data from staging_items table with id
     final dataListItems =
-    await DBHelper.queryStagingOrderItem(stagingOrderId, 'staging_items');
+        await DBHelper.queryStagingOrderItem(stagingOrderId, 'staging_items');
 
     //inserting retrieved data to order_items table
     for (int i = 0; i < dataListItems.length; i++) {
@@ -129,7 +130,8 @@ class CheckoutProvider with ChangeNotifier {
           totalAmount: dataList[i]['total_amount'],
           products: prod,
           orderDate: dataList[i]['order_date'],
-          vat: dataList[i]['vat']));
+          vat: dataList[i]['vat'],
+          discount: dataList[i]['discount']));
     }
     notifyListeners();
   }
@@ -148,16 +150,17 @@ class CheckoutProvider with ChangeNotifier {
               "order_ref": '${e.orderRef}',
               "order_list": e.products
                   .map((cp) => {
-                'title': '${cp.title}',
-                'quantity': '${cp.quantity}',
-                'price': '${cp.price}',
-              })
+                        'title': '${cp.title}',
+                        'quantity': '${cp.quantity}',
+                        'price': '${cp.price}',
+                      })
                   .toList(),
               "total_price": '${e.totalAmount}',
               "restaurant_id": '1',
               "order_date": '${e.orderDate}',
               'update_date': newFormat.format(DateTime.now()).toString(),
-              "vat": '${e.vat}'
+              "vat": '${e.vat}',
+              "discount": '${e.discount}'
             }));
       }).toList();
       _orders.clear();

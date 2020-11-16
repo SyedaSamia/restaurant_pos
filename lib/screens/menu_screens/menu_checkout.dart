@@ -42,11 +42,8 @@ class Checkout extends StatelessWidget {
       onPressed: () {
         if (cart.totalCheckoutAmount != 0) {
           Provider.of<CheckoutProvider>(context, listen: false)
-              .addCheckoutOrder(
-            cart.currentOrderId,
-            cart.totalCheckoutAmount,
-            cart.totalCheckoutVat,
-          );
+              .addCheckoutOrder(cart.currentOrderId, cart.totalAmountToPrint,
+                  cart.totalCheckoutVat, cart.currentDiscountToPrint);
           for (int i = 0; i < cart.checkoutItem.length; i++) {
             iNameList.add(cart.checkoutItem[i].title);
             iPriceList.add(cart.checkoutItem[i].price);
@@ -70,6 +67,7 @@ class Checkout extends StatelessWidget {
                       iPriceList,
                       iQuantityList,
                       cart.totalCheckoutVat,
+                      cart.currentDiscountToPrint,
                       cart.totalCheckoutAmount))
               .then((value) {
             cart.clear();
@@ -103,44 +101,58 @@ class Checkout extends StatelessWidget {
             ],
           ),
           drawer: MainDrawer(),
-          body: ListView.builder(
-            itemCount: cart.currentCheckoutItemsCount + 1,
-            itemBuilder: (ctx, i) => i < cart.currentCheckoutItemsCount
-                ? CheckoutItem(
-                    cart.checkoutItem[i].itemId,
-                    cart.checkoutItem[i].price,
-                    cart.checkoutItem[i].quantity,
-                    cart.checkoutItem[i].title,
-                  )
-                : Container(
-                    width: SizeConfig.blockSizeHorizontal * 70,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Container(
-                            width: SizeConfig.blockSizeHorizontal * 70,
-                            height: SizeConfig.blockSizeVertical * 5,
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text('Vat (15%)'),
-                                  Text('\$${cart.totalCheckoutVat}'),
-                                ]),
-                          ),
-                          Container(
-                            width: SizeConfig.blockSizeHorizontal * 70,
-                            height: SizeConfig.blockSizeVertical * 5,
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text('Total'),
-                                  Text('\$${cart.totalCheckoutAmount}'),
-                                ]),
-                          ),
-                        ])),
-          ),
+          body: cart.totalCheckoutAmount > 0
+              ? ListView.builder(
+                  itemCount: cart.currentCheckoutItemsCount + 1,
+                  itemBuilder: (ctx, i) => i < cart.currentCheckoutItemsCount
+                      ? CheckoutItem(
+                          cart.checkoutItem[i].itemId,
+                          cart.checkoutItem[i].price,
+                          cart.checkoutItem[i].quantity,
+                          cart.checkoutItem[i].title,
+                        )
+                      : Container(
+                          width: SizeConfig.blockSizeHorizontal * 70,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  width: SizeConfig.blockSizeHorizontal * 70,
+                                  height: SizeConfig.blockSizeVertical * 5,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text('Vat (15%)'),
+                                        Text('\$${cart.totalCheckoutVat}'),
+                                      ]),
+                                ),
+                                Container(
+                                  width: SizeConfig.blockSizeHorizontal * 70,
+                                  height: SizeConfig.blockSizeVertical * 5,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text('Discount'),
+                                        Text(
+                                            '\$${cart.currentDiscountToPrint}'),
+                                      ]),
+                                ),
+                                Container(
+                                  width: SizeConfig.blockSizeHorizontal * 70,
+                                  height: SizeConfig.blockSizeVertical * 5,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text('Total'),
+                                        Text('\$${cart.totalAmountToPrint}'),
+                                      ]),
+                                ),
+                              ])),
+                )
+              : Center(child: Text('Empty Checkout')),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: _floatingActionButton),
@@ -148,7 +160,7 @@ class Checkout extends StatelessWidget {
   }
 
   Future<void> _createPDF(_length, _itemNameList, _itemPriceList,
-      _itemQuantityList, _totalVat, _totalAmount) async {
+      _itemQuantityList, _totalVat, _discount, _totalAmount) async {
     //Create a PDF document.
     PdfDocument document = PdfDocument();
 
@@ -168,7 +180,7 @@ class Checkout extends StatelessWidget {
       backgroundBrush: PdfBrushes.white,
       borders: border,
       cellPadding: PdfPaddings(left: 1, right: 1, top: 1, bottom: 1),
-      font: PdfStandardFont(PdfFontFamily.timesRoman, 17),
+      font: PdfStandardFont(PdfFontFamily.courier, 17),
       format: format,
       textBrush: PdfBrushes.white,
       textPen: PdfPens.black,
@@ -216,20 +228,26 @@ class Checkout extends StatelessWidget {
 
     PdfGridRow row;
 
-    for (int i = 0; i <= _length + 1; i++) {
+    for (int i = 0; i <= _length + 2; i++) {
       row = grid.rows.add();
-      if (i < _length) {
+      if (i < _length - 1) {
         row.cells[0].value = '${i + 1}';
         row.cells[1].value = '${_itemNameList[i]}';
         row.cells[2].value = '${_itemQuantityList[i]}';
         row.cells[3].value = '${_itemPriceList[i]}';
         row.cells[4].value = '${_itemQuantityList[i] * _itemPriceList[i]}';
-      } else if (i == _length) {
+      } else if (i == _length - 1) {
         row.cells[0].value = 'Vat(15%)';
         row.cells[1].value = '';
         row.cells[2].value = '';
         row.cells[3].value = '';
         row.cells[4].value = '$_totalVat';
+      } else if (i == _length) {
+        row.cells[0].value = 'Discount';
+        row.cells[1].value = '';
+        row.cells[2].value = '';
+        row.cells[3].value = '';
+        row.cells[4].value = '$_discount';
       } else {
         row.cells[0].value = 'Total Amount';
         //  row.cells[1].value = '';

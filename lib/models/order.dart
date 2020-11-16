@@ -9,6 +9,7 @@ class OrderModel {
   final List<CartItemProvider> products;
   final String orderDate;
   final String vat;
+  final String discount;
 
   OrderModel(
       {@required this.orderRef,
@@ -17,5 +18,6 @@ class OrderModel {
       @required this.totalAmount,
       @required this.products,
       @required this.orderDate,
-      @required this.vat});
+      @required this.vat,
+      @required this.discount});
 }
