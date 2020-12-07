@@ -236,6 +236,11 @@ class _CartState extends State<Cart> {
 
                     /*Discount option ends*/
 
+                    /*
+                    *
+                    * Total starts
+                    *
+                    * */
                     Container(
                       padding: EdgeInsets.only(
                           top: SizeConfig.blockSizeVertical * 2),
@@ -268,6 +273,13 @@ class _CartState extends State<Cart> {
                             )),
                       ),
                     ),
+
+                    /*
+                    *
+                    * Total ends
+                    *
+                    * */
+
                     /*  Container(
                       child: Row(
                         children: <Widget>[
@@ -304,7 +316,11 @@ class _CartState extends State<Cart> {
                     ),
                   ],
                 )
-              : Center(child: Text('Add items to cart!')),
+              : Container(
+                  height: 50,
+                  child: Center(
+                      child: Container(
+                          height: 15, child: Text('Add items to cart!')))),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: _floatingActionButton

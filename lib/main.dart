@@ -43,7 +43,11 @@ void main() {
 
 void setErrorBuilder() {
   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-    return Scaffold(body: Center(child: Text("Please Wait...")));
+    return Scaffold(
+        body: Container(
+            height: 50,
+            child: Center(
+                child: Container(height: 15, child: Text("Please Wait...")))));
   };
 }
 

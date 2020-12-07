@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:restaurantpos/helpers/db_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/item_provider.dart';
+import 'auth.dart';
 
 /*
 * Gets items from server with api calling
@@ -32,13 +34,18 @@ class ItemsProvider with ChangeNotifier {
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       // I am connected to a network.
-
-      final url = 'http://haalkhata.xyz/api/items';
+      final prefs = await SharedPreferences.getInstance();
+      final extractedUserData =
+          json.decode(prefs.getString('userData')) as Map<String, Object>;
+      final _rid = extractedUserData['restaurant_id'];
+      //final _rid = getRestaurantId();
+      final url =
+          'http://haalkhata.xyz/api/items_by_restaurant?restaurant_id=$_rid';
       try {
         final response = await http.get(url);
         if (response.statusCode == 200) {
           final extractedData =
-          json.decode(response.body) as Map<String, dynamic>;
+              json.decode(response.body) as Map<String, dynamic>;
           List _list = extractedData['response'];
 
           final List<ItemProvider> loadedProducts = [];

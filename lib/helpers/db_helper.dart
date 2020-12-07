@@ -33,7 +33,7 @@ class DBHelper {
   static final _createOrderTable =
       'CREATE TABLE orders(order_ref TEXT PRIMARY KEY, waiter_id TEXT, restaurant_id TEXT, total_amount TEXT, order_date TEXT, vat Text, discount Text)';
   static final _createOrderItemsTable =
-      'CREATE TABLE order_items(id TEXT, item_id TEXT, title TEXT, quantity TEXT, price TEXT)';
+      'CREATE TABLE order_items(id TEXT, itemId TEXT, title TEXT, quantity TEXT, price TEXT)';
 
   static Future<Database> database() async {
     final dbPath = await sql.getDatabasesPath();

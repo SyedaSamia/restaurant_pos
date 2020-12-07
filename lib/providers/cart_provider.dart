@@ -66,7 +66,7 @@ class CartProvider with ChangeNotifier {
     _items.forEach((key, cartItem) {
       total += cartItem.price * cartItem.quantity;
     });
-    notifyListeners();
+    //notifyListeners();
     return total;
   }
 
@@ -230,6 +230,7 @@ class CartProvider with ChangeNotifier {
         quantity: existingCartItem.quantity + 1,
       ),
     );
+
     print(">>> ${_items.length}");
     // for (int i = 0; i < _items.length; i++) print(_items.values.toList());
     notifyListeners();

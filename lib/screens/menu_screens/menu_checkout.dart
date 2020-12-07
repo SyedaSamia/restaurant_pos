@@ -152,7 +152,11 @@ class Checkout extends StatelessWidget {
                                 ),
                               ])),
                 )
-              : Center(child: Text('Empty Checkout')),
+              : Container(
+                  height: 50,
+                  child: Center(
+                      child: Container(
+                          height: 15, child: Text('Empty Checkout')))),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: _floatingActionButton),

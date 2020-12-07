@@ -13,6 +13,8 @@ class Auth with ChangeNotifier {
   String _firstName;
   String _lastName;
   String _email;
+  String _restaurantId;
+  String _restaurantName;
 
   bool get isAuth {
     return token != null;
@@ -20,6 +22,14 @@ class Auth with ChangeNotifier {
 
   String get userFirstName {
     return _firstName;
+  }
+
+  String get restaurantId {
+    return _restaurantId;
+  }
+
+  String get restaurantName {
+    return _restaurantName;
   }
 
   String get userLastName {
@@ -53,7 +63,7 @@ String get token {
 
   //setting token and expiry date
   Future<void> _authenticate(String email, String password) async {
-    final url = 'http://haalkhata.xyz/api/user_login/';
+    final url = 'http://haalkhata.xyz/api/user_login';
     try {
       Dio dio = new Dio();
       //Instance level
@@ -66,6 +76,7 @@ String get token {
 
       final extractedData = response.data['response'];
 
+      //print(extractedData['restaurant']['restaurant_name']);
       if (response != null) {
         _token = extractedData['user_id'];
         print(_token);
@@ -73,6 +84,7 @@ String get token {
         _firstName = extractedData['first_name'];
         _lastName = extractedData['last_name'];
         _email = extractedData['email'];
+        _restaurantId = extractedData['restaurant']['restaurant_id'];
       }
 
       /*_expiryDate = DateTime.now().add(
@@ -89,7 +101,8 @@ String get token {
         'password': password,
         'first_name': extractedData['first_name'],
         'last_name': extractedData['last_name'],
-        'email': extractedData['email']
+        'email': extractedData['email'],
+        'restaurant_id': extractedData['restaurant']['restaurant_id']
       });
 
       prefs.setString(
@@ -121,6 +134,7 @@ String get token {
     _lastName = extractedUserData['last_name'];
     _email = extractedUserData['email'];
     _userId = _token;
+    _restaurantId = extractedUserData['restaurant_id'];
     // _expiryDate = expiryDate;
     notifyListeners();
     //_autoLogout();
@@ -151,4 +165,12 @@ String get token {
     final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
     _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
   }*/
+}
+
+Future<String> getRestaurantId() async {
+  final prefs = await SharedPreferences.getInstance();
+  final extractedUserData =
+      json.decode(prefs.getString('userData')) as Map<String, Object>;
+  final _rid = extractedUserData['restaurant_id'];
+  return _rid;
 }

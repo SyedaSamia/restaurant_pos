@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:restaurantpos/helpers/db_helper.dart';
 import 'package:restaurantpos/models/category.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoriesProvider with ChangeNotifier {
   List<CategoryProvider> _category = [];
@@ -26,7 +27,17 @@ class CategoriesProvider with ChangeNotifier {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
-      final url = 'http://haalkhata.xyz/api/item_categories';
+      final prefs = await SharedPreferences.getInstance();
+      if (!prefs.containsKey('userData')) {
+        print('>> try autologin false');
+        return false;
+      }
+      final extractedUserData =
+          json.decode(prefs.getString('userData')) as Map<String, Object>;
+      final _rid = extractedUserData['restaurant_id'];
+
+      final url =
+          'http://haalkhata.xyz/api/item_categories_by_restaurant?restaurant_id=$_rid';
       try {
         final response = await http.get(url);
         final extractedData =
