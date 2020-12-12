@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:restaurantpos/utils/size_config.dart';
@@ -24,41 +25,69 @@ class _HomePageState extends State<HomePage> {
     Future<bool> _onBackPressed() {
       return showDialog(
             context: context,
-            builder: (context) => new AlertDialog(
-              elevation: 0.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              title: new Text(
-                'Are you sure?',
-                style: TextStyle(
-                  fontFamily: 'Source Sans Pro',
-                  fontSize: SizeConfig.safeBlockHorizontal * 5.5,
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.normal,
-                ),
-                textAlign: TextAlign.center,
+            builder: (context) => AssetGiffyDialog(
+              image: Image.asset(
+                'assets/face.gif',
+                fit: BoxFit.cover,
               ),
-              content: new Text('Do you want to exit an App'),
-              actions: <Widget>[
-                new GestureDetector(
-                  onTap: () => Navigator.of(context).pop(false),
-                  child: Text("NO",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                ),
-                SizedBox(height: 60),
-                new GestureDetector(
-                  onTap: () => Navigator.of(context).pop(true),
-                  child: Text(
-                    "YES",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(height: 20),
-              ],
-            ),
-          ) ??
+              title: Text(
+                'Signing Out',
+                textAlign: TextAlign.center,
+                style:
+                TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600),
+              ),
+              entryAnimation: EntryAnimation.TOP,
+              description: Text(
+                'Are you sure?',
+                textAlign: TextAlign.center,
+                style: TextStyle(),
+              ),
+              onOkButtonPressed: () {
+                Navigator.of(context).pop(true);
+                //navigating back to login screen
+                // Navigator.popUntil(context, ModalRoute.withName('/login'));
+              },
+            )) ??
           false;
+
+
+
+
+          //   new AlertDialog(
+          //     elevation: 0.0,
+          //     shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(15)),
+          //     title: new Text(
+          //       'Are you sure?',
+          //       style: TextStyle(
+          //         fontFamily: 'Source Sans Pro',
+          //         fontSize: SizeConfig.safeBlockHorizontal * 5.5,
+          //         fontWeight: FontWeight.w400,
+          //         fontStyle: FontStyle.normal,
+          //       ),
+          //       textAlign: TextAlign.center,
+          //     ),
+          //     content: new Text('Do you want to exit an App'),
+          //     actions: <Widget>[
+          //       new GestureDetector(
+          //         onTap: () => Navigator.of(context).pop(false),
+          //         child: Text("NO",
+          //             style:
+          //                 TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          //       ),
+          //       SizedBox(height: 60),
+          //       new GestureDetector(
+          //         onTap: () => Navigator.of(context).pop(true),
+          //         child: Text(
+          //           "YES",
+          //           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          //         ),
+          //       ),
+          //       SizedBox(height: 20),
+          //     ],
+          //   ),
+          // ) ??
+          // false;
     }
 
     return WillPopScope(
