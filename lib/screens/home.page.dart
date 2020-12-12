@@ -31,21 +31,15 @@ class _HomePageState extends State<HomePage> {
                 fit: BoxFit.cover,
               ),
               title: Text(
-                'Signing Out',
+                'Do you want to exit?',
                 textAlign: TextAlign.center,
                 style:
                 TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600),
               ),
               entryAnimation: EntryAnimation.TOP,
-              description: Text(
-                'Are you sure?',
-                textAlign: TextAlign.center,
-                style: TextStyle(),
-              ),
+
               onOkButtonPressed: () {
                 Navigator.of(context).pop(true);
-                //navigating back to login screen
-                // Navigator.popUntil(context, ModalRoute.withName('/login'));
               },
             )) ??
           false;
