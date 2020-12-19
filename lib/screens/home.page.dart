@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
                 style:
                 TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600),
               ),
-              entryAnimation: EntryAnimation.TOP,
+              entryAnimation: EntryAnimation.BOTTOM_RIGHT,
 
               onOkButtonPressed: () {
                 Navigator.of(context).pop(true);
@@ -44,44 +44,6 @@ class _HomePageState extends State<HomePage> {
             )) ??
           false;
 
-
-
-
-          //   new AlertDialog(
-          //     elevation: 0.0,
-          //     shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(15)),
-          //     title: new Text(
-          //       'Are you sure?',
-          //       style: TextStyle(
-          //         fontFamily: 'Source Sans Pro',
-          //         fontSize: SizeConfig.safeBlockHorizontal * 5.5,
-          //         fontWeight: FontWeight.w400,
-          //         fontStyle: FontStyle.normal,
-          //       ),
-          //       textAlign: TextAlign.center,
-          //     ),
-          //     content: new Text('Do you want to exit an App'),
-          //     actions: <Widget>[
-          //       new GestureDetector(
-          //         onTap: () => Navigator.of(context).pop(false),
-          //         child: Text("NO",
-          //             style:
-          //                 TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          //       ),
-          //       SizedBox(height: 60),
-          //       new GestureDetector(
-          //         onTap: () => Navigator.of(context).pop(true),
-          //         child: Text(
-          //           "YES",
-          //           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          //         ),
-          //       ),
-          //       SizedBox(height: 20),
-          //     ],
-          //   ),
-          // ) ??
-          // false;
     }
 
     return WillPopScope(

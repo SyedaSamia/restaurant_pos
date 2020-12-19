@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.36.4"
+  animated_button:
+    dependency: "direct main"
+    description:
+      name: animated_button
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.3"
   archive:
     dependency: transitive
     description:

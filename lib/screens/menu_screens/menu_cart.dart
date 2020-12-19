@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:restaurantpos/providers/order_staging_provider.dart';
@@ -30,12 +31,12 @@ class _CartState extends State<Cart> {
       cart.changeCheckVat(_checkedValue);
       vm
           .addStagingOrderFromCart(
-              cart.items.values.toList(),
-              cart.totalAmount,
-              cart.totalVat,
-              _discount,
-              _percentageDiscountChecked,
-              DateTime.now().toString())
+          cart.items.values.toList(),
+          cart.totalAmount,
+          cart.totalVat,
+          _discount,
+          _percentageDiscountChecked,
+          DateTime.now().toString())
           .then((value) {
         vm.fetchAndSetStagedOrders();
         cart.clear();
@@ -51,77 +52,32 @@ class _CartState extends State<Cart> {
       SizeConfig().init(context);
       showDialog(
           context: context,
-          builder: (_) => AlertDialog(
-              // backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              title: Text(
-                "Are You Sure?",
-                style: TextStyle(
-                  fontFamily: 'Source Sans Pro',
-                  fontSize: SizeConfig.safeBlockHorizontal * 5.5,
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.normal,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              content: Container(
-                //   height: SizeConfig.blockSizeHorizontal * 30,
-                // width: SizeConfig.blockSizeVertical * 100,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "You want to stage order",
-                      //  maxLines: 1,
-                      overflow: TextOverflow.visible,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontFamily: 'Source Sans Pro',
-                        color: Color(0xFF606060),
-                        fontSize: SizeConfig.safeBlockHorizontal * 4,
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.normal,
-                      ),
-                    ),
-                    SizedBox(
-                      height: SizeConfig.blockSizeHorizontal * 3,
-                    ),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          FlatButton(
-                            child: new Text("Cancel",
-                                style: TextStyle(
-                                  fontFamily: 'Source Sans Pro',
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: SizeConfig.safeBlockHorizontal * 6,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                )),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          FlatButton(
-                            child: new Text("Yes",
-                                style: TextStyle(
-                                  fontFamily: 'Source Sans Pro',
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: SizeConfig.safeBlockHorizontal * 6,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                )),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              _yesDialogFunctionality(context);
-                            },
-                          ),
-                        ])
-                  ],
-                ),
-              )));
+          builder: (_) => AssetGiffyDialog(
+            image: Image.asset(
+              'assets/face.gif',
+              fit: BoxFit.cover,
+            ),
+            title: Text(
+              'Are You Sure?',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600),
+            ),
+            entryAnimation: EntryAnimation.BOTTOM_RIGHT,
+            description: Text(
+              'You want to stage order',
+              textAlign: TextAlign.center,
+              style: TextStyle(),
+            ),
+            onOkButtonPressed: () {
+              Navigator.of(context).pop();
+              _yesDialogFunctionality(context);
+            },
+            onCancelButtonPressed: () {
+              Navigator.of(context).pop();
+            },
+          ));
+
+
     }
 
     final _floatingActionButton = FloatingActionButton.extended(
@@ -139,13 +95,13 @@ class _CartState extends State<Cart> {
         (cart.totalAmount != 0)
             ? _showDialog(context)
             : Fluttertoast.showToast(
-                msg: "Empty Cart! Please add items to stage order",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-                // timeInSecForIosWeb: 1,
-                backgroundColor: Colors.blueGrey,
-                textColor: Colors.white,
-                fontSize: 16.0);
+            msg: "Empty Cart! Please add items to stage order",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            // timeInSecForIosWeb: 1,
+            backgroundColor: Colors.blueGrey,
+            textColor: Colors.white,
+            fontSize: 16.0);
       },
       backgroundColor: Theme.of(context).primaryColor,
     );
@@ -169,119 +125,118 @@ class _CartState extends State<Cart> {
           drawer: MainDrawer(),
           body: (cart.itemCount > 0)
               ? Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    /*
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              /*
                     *
                     * Vat option starts
                     *
                     * */
 
-                    StatefulBuilder(
-                        builder: (BuildContext ctx, StateSetter setState) {
-                      return CheckboxListTile(
-                        title: Text('Add Vat(15%)'),
-                        activeColor: Colors.blue,
-                        value: _checkedValue,
-                        onChanged: (newValue) {
-                          setState(() {
-                            _checkedValue = newValue;
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                      );
-                    }),
+              StatefulBuilder(
+                  builder: (BuildContext ctx, StateSetter setState) {
+                    return CheckboxListTile(
+                      title: Text('Add Vat(15%)'),
+                      activeColor: Colors.blue,
+                      value: _checkedValue,
+                      onChanged: (newValue) {
+                        setState(() {
+                          _checkedValue = newValue;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                    );
+                  }),
 
-                    /*
+              /*
                     *
                     * Vat option ends
                     *
                     * */
 
-                    /*
+              /*
                     * Discount Option starts
                     *
                     * */
-                    Row(children: [
-                      StatefulBuilder(
-                          builder: (BuildContext ctx, StateSetter setState) {
-                        return Container(
-                          width: SizeConfig.blockSizeHorizontal * 55,
-                          height: SizeConfig.blockSizeVertical * 5,
-                          child: CheckboxListTile(
-                            title: Text('Discount (%)'),
-                            activeColor: Colors.blue,
-                            value: _percentageDiscountChecked,
-                            onChanged: (newValue) {
-                              setState(() {
-                                _percentageDiscountChecked = newValue;
-                              });
-                            },
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
-                        );
-                      }),
-                      Container(
-                          width: SizeConfig.blockSizeHorizontal * 30,
-                          height: SizeConfig.blockSizeVertical * 5,
-                          child: TextField(
-                            controller: discountController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(hintText: 'Amount'),
-                            onChanged: (value) {
-                              _discount = double.parse(discountController.text);
-                            },
-                          )),
-                    ]),
+              Row(children: [
+                StatefulBuilder(
+                    builder: (BuildContext ctx, StateSetter setState) {
+                      return Container(
+                        width: SizeConfig.blockSizeHorizontal * 55,
+                        height: SizeConfig.blockSizeVertical * 5,
+                        child: CheckboxListTile(
+                          title: Text('Discount (%)'),
+                          activeColor: Colors.blue,
+                          value: _percentageDiscountChecked,
+                          onChanged: (newValue) {
+                            setState(() {
+                              _percentageDiscountChecked = newValue;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ),
+                      );
+                    }),
+                Container(
+                    width: SizeConfig.blockSizeHorizontal * 30,
+                    height: SizeConfig.blockSizeVertical * 5,
+                    child: TextField(
+                      controller: discountController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(hintText: 'Amount'),
+                      onChanged: (value) {
+                        _discount = double.parse(discountController.text);
+                      },
+                    )),
+              ]),
 
-                    /*Discount option ends*/
+              /*Discount option ends*/
 
-                    /*
+              /*
                     *
                     * Total starts
-                    * TODO total update ui
                     *
                     * */
-                    Container(
-                      padding: EdgeInsets.only(
-                          top: SizeConfig.blockSizeVertical * 2),
-                      child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 17),
-                        child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  'Total',
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                Spacer(),
-                                Chip(
-                                  label: Text(
-                                    '\$${(cart.totalAmount).toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .primaryTextTheme
-                                          .title
-                                          .color,
-                                    ),
-                                  ),
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                ),
-                              ],
-                            )),
-                      ),
-                    ),
+              Container(
+                padding: EdgeInsets.only(
+                    top: SizeConfig.blockSizeVertical * 2),
+                child: Card(
+                  margin: EdgeInsets.symmetric(horizontal: 17),
+                  child: Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Total',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Spacer(),
+                          Chip(
+                            label: Text(
+                              '\$${(cart.totalAmount).toStringAsFixed(2)}',
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .primaryTextTheme
+                                    .title
+                                    .color,
+                              ),
+                            ),
+                            backgroundColor:
+                            Theme.of(context).primaryColor,
+                          ),
+                        ],
+                      )),
+                ),
+              ),
 
-                    /*
+              /*
                     *
                     * Total ends
                     *
                     * */
 
-                    /*  Container(
+              /*  Container(
                       child: Row(
                         children: <Widget>[
                           Text('Discount'),
@@ -301,32 +256,32 @@ class _CartState extends State<Cart> {
                       ),
                     ),*/
 
-                    SizedBox(height: 10),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: cart.items.length,
-                        itemBuilder: (ctx, i) => CartItem(
-                          i,
-                          cart.items.values.toList()[i].id,
-                          cart.items.keys.toList()[i],
-                          //    cart.items.values.toList()[i].price,
-                          //   cart.items.values.toList()[i].quantity,
-                          cart.items.values.toList()[i].title,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
+              SizedBox(height: 10),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: cart.items.length,
+                  itemBuilder: (ctx, i) => CartItem(
+                    i,
+                    cart.items.values.toList()[i].id,
+                    cart.items.keys.toList()[i],
+                    //    cart.items.values.toList()[i].price,
+                    //   cart.items.values.toList()[i].quantity,
+                    cart.items.values.toList()[i].title,
+                  ),
+                ),
+              ),
+            ],
+          )
               : Container(
-                  height: 50,
-                  child: Center(
-                      child: Container(
-                          height: 15, child: Text('Add items to cart!')))),
+              height: 50,
+              child: Center(
+                  child: Container(
+                      height: 15, child: Text('Add items to cart!')))),
           floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
+          FloatingActionButtonLocation.centerFloat,
           floatingActionButton: _floatingActionButton
-          // bottomNavigationBar: ,
-          ),
+        // bottomNavigationBar: ,
+      ),
     );
   }
 }

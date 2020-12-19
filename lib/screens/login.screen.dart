@@ -1,9 +1,10 @@
 import 'dart:io';
 
+import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/auth.dart';
-import 'home.page.dart';
+
 
 enum AuthMode { Login }
 
@@ -120,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.only(top: 240, bottom: 20),
               child: Text(
-                'Point of Sale App',
+                'Haal Khata - PoS App',
                 style: TextStyle(
                     fontSize: 30, fontWeight: FontWeight.bold, color: _front),
               ),
@@ -179,16 +180,23 @@ class _LoginPageState extends State<LoginPage> {
                               backgroundColor: Theme.of(context).primaryColor,
                             )
                           else
-                            RaisedButton(
+                            AnimatedButton(
                               color: _back,
-                              child: Text('LOGIN'),
-                              onPressed: _submit,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
+                              child: Text(
+                                'LOGIN',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 30.0, vertical: 8.0),
-                              textColor: _front,
+                              onPressed: _submit,
+                              // shape: RoundedRectangleBorder(
+                              //   borderRadius: BorderRadius.circular(30),
+                              // ),
+                              // padding: EdgeInsets.symmetric(
+                              //   horizontal: 30.0, vertical: 8.0),
+                              //textColor: _front,
                             ),
                         ],
                       ),
@@ -212,7 +220,7 @@ class _LoginPageState extends State<LoginPage> {
                   //  fontFamily: 'SourceSansPro',
                   //color: Color(0xff606060),
                   color: Colors.white70,
-                  fontSize: 8,
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
                   // fontStyle: FontStyle.normal,
                 )),
