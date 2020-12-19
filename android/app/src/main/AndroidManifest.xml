@@ -8,8 +8,11 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="restaurantpos"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Haal Khata"
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
+        >
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
