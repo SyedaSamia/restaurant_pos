@@ -239,6 +239,7 @@ class _CartState extends State<Cart> {
                     /*
                     *
                     * Total starts
+                    * TODO total update ui
                     *
                     * */
                     Container(

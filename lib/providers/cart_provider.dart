@@ -66,10 +66,20 @@ class CartProvider with ChangeNotifier {
     _items.forEach((key, cartItem) {
       total += cartItem.price * cartItem.quantity;
     });
-    //notifyListeners();
+    print('total in Cart $total');
     return total;
+//    return _totalInCart;
   }
 
+  var _totalInCart = 0.0;
+
+  /*void calculateTotalInCart() {
+    _items.forEach((key, cartItem) {
+      _totalInCart += cartItem.price * cartItem.quantity;
+    });
+    notifyListeners();
+  }
+*/
   var _checkVat = false;
 
   void changeCheckVat(bool _check) {
