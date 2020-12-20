@@ -27,6 +27,14 @@ class _CartState extends State<Cart> {
     bool _percentageDiscountChecked = false;
     double _discount = 0.0;
 
+    var _tot = cart.totalAmount;
+
+    changeTotal(_val) {
+      setState(() {
+        _tot = cart.totalAmount;
+      });
+    }
+
     void _yesDialogFunctionality(context) {
       cart.changeCheckVat(_checkedValue);
       vm
@@ -199,7 +207,7 @@ class _CartState extends State<Cart> {
                       padding: EdgeInsets.only(
                           top: SizeConfig.blockSizeVertical * 2),
                       child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 17),
+                        margin: EdgeInsets.all(25),
                         child: Padding(
                             padding: EdgeInsets.all(8),
                             child: Row(
@@ -212,7 +220,7 @@ class _CartState extends State<Cart> {
                                 Spacer(),
                                 Chip(
                                   label: Text(
-                                    '\$${(cart.totalAmount).toStringAsFixed(2)}',
+                                    '\$${(_tot).toStringAsFixed(2)}',
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .primaryTextTheme
@@ -234,38 +242,18 @@ class _CartState extends State<Cart> {
                     *
                     * */
 
-                    /*  Container(
-                      child: Row(
-                        children: <Widget>[
-                          Text('Discount'),
-                          Expanded(
-                            child: TextField(
-                                // controller: _controller,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[
-                                  WhitelistingTextInputFormatter.digitsOnly
-                                ],
-                                decoration: InputDecoration(
-                                       labelText:"whatever you want",
-                                    hintText: "whatever you want",
-                                    icon: Icon(Icons.phone_iphone))),
-                          )
-                        ],
-                      ),
-                    ),*/
-
                     SizedBox(height: 10),
                     Expanded(
                       child: ListView.builder(
                         itemCount: cart.items.length,
                         itemBuilder: (ctx, i) => CartItem(
-                          i,
-                          cart.items.values.toList()[i].id,
-                          cart.items.keys.toList()[i],
-                          //    cart.items.values.toList()[i].price,
-                          //   cart.items.values.toList()[i].quantity,
-                          cart.items.values.toList()[i].title,
-                        ),
+                            i,
+                            cart.items.values.toList()[i].id,
+                            cart.items.keys.toList()[i],
+                            //    cart.items.values.toList()[i].price,
+                            //   cart.items.values.toList()[i].quantity,
+                            cart.items.values.toList()[i].title,
+                            updateCounter: changeTotal),
                       ),
                     ),
                   ],

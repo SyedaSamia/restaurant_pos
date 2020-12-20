@@ -10,15 +10,16 @@ class CartItem extends StatefulWidget {
   // final double price;
   // final int quantity;
   final String title;
+  final updateCounter;
 
   CartItem(
-    this.i,
-    this.id,
-    this.productId,
-    //  this.price,
-    //  this.quantity,
-    this.title,
-  );
+      this.i,
+      this.id,
+      this.productId,
+      //  this.price,
+      //  this.quantity,
+      this.title,
+      {this.updateCounter});
 
   @override
   _CartItemState createState() => _CartItemState();
@@ -73,6 +74,7 @@ class _CartItemState extends State<CartItem> {
       },
       onDismissed: (direction) {
         cart.removeItem(widget.productId);
+        widget.updateCounter(cart.totalAmount);
       },
       child: Card(
         margin: EdgeInsets.symmetric(
@@ -116,6 +118,7 @@ class _CartItemState extends State<CartItem> {
                         print(
                             'productId in cartItem to increase qty ${widget.productId}');
                         cart.addSingleItem(widget.productId);
+                        widget.updateCounter(cart.totalAmount);
                       });
                       //quantity
                     },
@@ -125,6 +128,7 @@ class _CartItemState extends State<CartItem> {
                         color: Theme.of(context).primaryColor),
                     onPressed: () => setState(() {
                       cart.removeSingleItem(widget.productId);
+                      widget.updateCounter(cart.totalAmount);
                     }),
                   )
                 ],
