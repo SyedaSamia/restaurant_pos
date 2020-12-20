@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
 import 'package:restaurantpos/providers/order_staging_provider.dart';
@@ -39,6 +40,36 @@ class EditCart extends StatelessWidget {
     }
 
     void _showDialog(context) {
+      SizeConfig().init(context);
+      showDialog(
+          context: context,
+          builder: (_) => AssetGiffyDialog(
+                image: Image.asset(
+                  'assets/face.gif',
+                  fit: BoxFit.cover,
+                ),
+                title: Text(
+                  'Are You Sure?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600),
+                ),
+                entryAnimation: EntryAnimation.BOTTOM_RIGHT,
+                description: Text(
+                  'You want to stage order',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(),
+                ),
+                onOkButtonPressed: () {
+                  Navigator.of(context).pop();
+                  _yesDialogFunctionality(context);
+                },
+                onCancelButtonPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ));
+    }
+
+    /* void _showDialog(context) {
       SizeConfig().init(context);
       showDialog(
           context: context,
@@ -113,7 +144,7 @@ class EditCart extends StatelessWidget {
                   ],
                 ),
               )));
-    }
+    }*/
 
     final _updateOrder = RaisedButton(
       color: Theme.of(context).primaryColor,

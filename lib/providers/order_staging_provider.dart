@@ -262,7 +262,8 @@ class OrderStagingProvider with ChangeNotifier {
     _resultPercentageBool =
         await DBHelper.getDataWithId('staging_orders', _id, 'id');
 
-    var fix = (_resultDiscount[0]['discount']).toStringAsFixed(2);
+    var fix = (_resultDiscount[0]['discount']);
+    print('edit staging order > fix $fix');
     _currentDiscountAmount = double.parse(fix);
     _discountPercentage =
         _resultPercentageBool[0]['discount_percentage'] == 0 ? false : true;
