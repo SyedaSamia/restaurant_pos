@@ -198,7 +198,7 @@ class Checkout extends StatelessWidget {
       backgroundBrush: PdfBrushes.white,
       textPen: PdfPens.black,
       textBrush: PdfBrushes.white,
-      font: PdfStandardFont(PdfFontFamily.zapfDingbats, 17),
+      font: PdfStandardFont(PdfFontFamily.timesRoman, 17),
     );
     final PdfPage page = document.pages.add();
     PdfGrid grid = PdfGrid();
@@ -212,21 +212,6 @@ class Checkout extends StatelessWidget {
     header.cells[3].value = 'Price';
     header.cells[4].value = 'Total';
 
-    //Add page and draw text to the page.
-    /* document.pages.add().graphics.drawString(
-        'Hello World!', PdfStandardFont(PdfFontFamily.helvetica, 18),
-        brush: PdfSolidBrush(PdfColor(0, 0, 0)),
-        bounds: Rect.fromLTWH(0, 0, 500, 30));*/
-
-    // PdfGridRow totalAmount = grid.rows.add();
-
-    // PdfGridRow totalVat = grid.rows.add();
-    /* totalAmount.style = PdfGridRowStyle(
-        backgroundBrush: PdfBrushes.dimGray,
-        textPen: PdfPens.lightGoldenrodYellow,
-        textBrush: PdfBrushes.darkOrange,
-        font: PdfStandardFont(PdfFontFamily.timesRoman, 12));*/
-
     //Apply the grid style
     grid.rows.applyStyle(gridStyle);
 
@@ -234,20 +219,20 @@ class Checkout extends StatelessWidget {
 
     for (int i = 0; i <= _length + 2; i++) {
       row = grid.rows.add();
-      if (i < _length - 1) {
+      if (i < _length) {
         row.cells[0].value = '${i + 1}';
         row.cells[1].value = '${_itemNameList[i]}';
         row.cells[2].value = '${_itemQuantityList[i]}';
         row.cells[3].value = '${_itemPriceList[i]}';
         row.cells[4].value = '${_itemQuantityList[i] * _itemPriceList[i]}';
-      } else if (i == _length - 1) {
-        row.cells[0].value = 'Vat(15%)';
+      } else if (i == _length) {
+        row.cells[0].value = '+Vat(15%)';
         row.cells[1].value = '';
         row.cells[2].value = '';
         row.cells[3].value = '';
         row.cells[4].value = '$_totalVat';
-      } else if (i == _length) {
-        row.cells[0].value = 'Discount';
+      } else if (i == _length + 1) {
+        row.cells[0].value = '-Discount';
         row.cells[1].value = '';
         row.cells[2].value = '';
         row.cells[3].value = '';
@@ -274,14 +259,25 @@ class Checkout extends StatelessWidget {
     var _bounds = const Rect.fromLTWH(0, 0, 0, 0);
     grid.draw(page: page, bounds: _bounds);*/
 
-    /*page.graphics.drawString('Total Amount: \$' + totalAmount.toString(),
-        PdfStandardFont(PdfFontFamily.helvetica, 18),
-        bounds: Rect.fromLTWH(400, 0, page.getClientSize().width - 400, 100),
-        brush: PdfBrushes.white,
-        format: PdfStringFormat(
-            alignment: PdfTextAlignment.center,
-            lineAlignment: PdfVerticalAlignment.middle));*/
-    grid.draw(page: page, bounds: const Rect.fromLTWH(0, 0, 0, 0));
+    grid.draw(page: page, bounds: const Rect.fromLTWH(0, 40, 0, 0));
+
+    /**
+     *
+     * header date time starts
+     *
+     * **/
+
+    /*
+    page.graphics.drawString(
+        'Hello World!', PdfStandardFont(PdfFontFamily.helvetica, 20),
+        bounds: Rect.fromLTWH(0, 0, 500, 40));*/
+
+    /**
+     *
+     * header date time ends
+     *
+     * **/
+
     //Save the document
     var bytes = document.save();
     // Dispose the document

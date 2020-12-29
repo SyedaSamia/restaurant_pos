@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:restaurantpos/helpers/db_helper.dart';
 import 'package:restaurantpos/models/order.dart';
+import 'package:restaurantpos/providers/order_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cart_provider.dart';
 
@@ -97,7 +98,8 @@ class CheckoutProvider with ChangeNotifier {
       'waiter_id': userId,
       'restaurant_id': '$_rid',
       'total_amount': total,
-      'discount': discount,
+      'vat': '$vat',
+      'discount': '$discount',
       'order_date': newFormat.format(DateTime.now()).toString(), //only datevat
     });
 
@@ -163,20 +165,32 @@ class CheckoutProvider with ChangeNotifier {
           'POST', Uri.parse('http://haalkhata.xyz/api/submit_order'));
       print('userId: $_userId, vat = ${e.vat}, discount = ${e.discount}');
       print('${e.products.map((cp) => {
-            'item_id': '${cp.itemId}',
-            'item_description': '${cp.title}',
+            'item_id': "${cp.itemId}",
+            'item_description': "${cp.title}",
             'quantity': cp.quantity,
             'price': cp.price,
           }).toList()}');
+
+      /*   List<ItemDetails> oItems = e.products
+          .map((cp) => ItemDetails(
+              cp.itemId, cp.title, cp.quantity.toString(), cp.price.toString()))
+          .toList();*/
+
+      List<Map<String, Object>> oItems = e.products
+          .map((cp) => {
+                'item_id': "${cp.itemId}",
+                'item_description': "${cp.title}",
+                'quantity': cp.quantity,
+                'price': cp.price,
+              })
+          .toList();
+
+      print(oItems);
+
       request.bodyFields = {
         'waiter_id': '$_userId',
         'order_ref': '$dateTime',
-        'order_list': '${e.products.map((cp) => {
-              'item_id': '${cp.itemId}',
-              'item_description': '${cp.title}',
-              'quantity': cp.quantity,
-              'price': cp.price,
-            }).toList()}',
+        'order_list': json.encoder.convert(oItems),
         'total_price': '${e.totalAmount}',
         'restaurant_id': '${e.restaurantId}',
         'discount_amount': '${e.discount}',

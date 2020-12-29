@@ -18,20 +18,22 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  bool _percentageDiscountChecked = false;
+  double _discount = 0.0;
+  bool _checkedValue = false;
+
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context, listen: false);
     final vm = Provider.of<OrderStagingProvider>(context, listen: false);
-    bool _checkedValue = false;
+
     TextEditingController discountController = new TextEditingController();
-    bool _percentageDiscountChecked = false;
-    double _discount = 0.0;
 
     var _tot = cart.totalAmount;
 
     changeTotal(_val) {
       setState(() {
-        _tot = cart.totalAmount;
+        _tot = _val;
       });
     }
 
@@ -203,6 +205,7 @@ class _CartState extends State<Cart> {
                     * Total starts
                     *
                     * */
+
                     Container(
                       padding: EdgeInsets.only(
                           top: SizeConfig.blockSizeVertical * 2),
