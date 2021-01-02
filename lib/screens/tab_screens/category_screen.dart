@@ -55,7 +55,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               itemCount: categories.length,
               itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
                 value: categories[i],
-                child: Category(),
+                child: Category(i),
               ),
               separatorBuilder: (context, index) => Divider(),
             ),

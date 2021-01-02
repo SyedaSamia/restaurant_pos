@@ -45,6 +45,7 @@ dependencies:
   giffy_dialog: ^1.8.0
   #for animated button
   animated_button: ^0.1.3
+  flutter_launcher_icons: ^0.8.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -60,7 +61,10 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/LOGO v2.jpeg"
 # The following section is specific to Flutter.
 flutter:
   uses-material-design: true

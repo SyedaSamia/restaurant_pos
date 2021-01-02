@@ -54,7 +54,7 @@ class _ItemScreenState extends State<ItemScreen> {
               itemCount: items.length,
               itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
                 value: items[i],
-                child: Item(),
+                child: Item(i),
               ),
               separatorBuilder: (context, index) => Divider(),
             ),

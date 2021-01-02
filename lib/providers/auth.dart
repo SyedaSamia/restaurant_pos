@@ -62,8 +62,9 @@ String get token {
   }
 
   //setting token and expiry date
-  Future<void> _authenticate(String email, String password) async {
+  Future<String> _authenticate(String email, String password) async {
     final url = 'http://haalkhata.xyz/api/user_login';
+    var error = 'No Error';
     try {
       Dio dio = new Dio();
       //Instance level
@@ -110,9 +111,11 @@ String get token {
 
       notifyListeners();
     } catch (e) {
+      error = e;
       print(e);
       print("stops here");
     }
+    return error;
   }
 
   Future<bool> tryAutoLogin() async {
@@ -141,7 +144,7 @@ String get token {
     return true;
   }
 
-  Future<void> login(String email, String password) async {
+  Future<String> login(String email, String password) async {
     print('>> login');
     return _authenticate(email, password);
   }

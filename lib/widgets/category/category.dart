@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:restaurantpos/models/category.dart';
 
 class Category extends StatelessWidget {
+  final count;
+  Category(this.count);
   @override
   Widget build(BuildContext context) {
     final category = Provider.of<CategoryProvider>(context, listen: false);
@@ -17,6 +19,7 @@ class Category extends StatelessWidget {
         /*backgroundImage: NetworkImage(
          category.imageUrl,
         ), */
+        child: Text('${count + 1}'),
       ),
       //subtitle: Text(category.price),
     );

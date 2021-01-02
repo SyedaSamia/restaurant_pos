@@ -54,7 +54,7 @@ class CategoriesProvider with ChangeNotifier {
             DBHelper.insert('categories', {
               'category_id': _list[i]['category_id'],
               'category_description': _list[i]['category_description'],
-              'price': _list[i]['category_image']
+              'category_image': _list[i]['category_image']
             });
           }
           final dataList = await DBHelper.getData('categories');

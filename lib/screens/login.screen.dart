@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantpos/providers/auth.dart';
 
-
 enum AuthMode { Login }
 
 class LoginPage extends StatefulWidget {
@@ -50,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
       // Invalid!
       return;
     }
+    var errorMessage = 'Authentication failed';
     _formKey.currentState.save();
     setState(() {
       _isLoading = true;
@@ -57,13 +57,14 @@ class _LoginPageState extends State<LoginPage> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
-        await Provider.of<Auth>(context, listen: false).login(
+        errorMessage = await Provider.of<Auth>(context, listen: false).login(
           _authData['email'],
           _authData['password'],
         );
       }
     } on HttpException catch (error) {
-      var errorMessage = 'Authentication failed';
+      print('HttpException error');
+
       if (error.toString().contains('EMAIL_EXISTS')) {
         errorMessage = 'This email address is already in use.';
       } else if (error.toString().contains('INVALID_EMAIL')) {
@@ -77,14 +78,16 @@ class _LoginPageState extends State<LoginPage> {
       }
       _showErrorDialog(errorMessage);
     } catch (error) {
+      print('Catch error>> $error');
       const errorMessage =
-          'Could not authenticate you. Please try again later.';
+          'Could not authenticate you! Please give your email & password correctly.';
       _showErrorDialog(errorMessage);
     }
-
     setState(() {
       _isLoading = false;
     });
+    /* if (errorMessage != 'No Error')
+      _showErrorDialog('Invalid email or password! Please try again.');*/
   }
 
   final _back = Colors.blue;
@@ -118,8 +121,18 @@ class _LoginPageState extends State<LoginPage> {
         //    padding: EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
+            /*Container(
+                // padding: const EdgeInsets.only(top: 140, bottom: 20),
+                margin: EdgeInsets.only(top: 220),
+                child: Image(
+                  image: AssetImage("assets/LOGO v2.jpeg"),
+                  fit: BoxFit.cover,
+                ),
+                height: 50,
+                width: 100),*/
             Padding(
-              padding: const EdgeInsets.only(top: 240, bottom: 20),
+              padding:
+                  const EdgeInsets.only(top: 240, bottom: 20), //top240--- 30
               child: Text(
                 'Haal Khata - PoS App',
                 style: TextStyle(

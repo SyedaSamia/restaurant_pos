@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:restaurantpos/models/item_provider.dart';
 import 'package:restaurantpos/providers/cart_provider.dart';
 
-
 class Item extends StatelessWidget {
+  final count;
+  Item(this.count);
+
   @override
   Widget build(BuildContext context) {
     final item = Provider.of<ItemProvider>(context, listen: false);
@@ -17,6 +19,7 @@ class Item extends StatelessWidget {
       leading: CircleAvatar(
         radius: 25,
         backgroundColor: Colors.deepPurple,
+        child: Text('${count + 1}'),
         /* backgroundImage: NetworkImage(
          item.imageUrl,
         ),*/
@@ -30,7 +33,11 @@ class Item extends StatelessWidget {
         onPressed: () {
           // print(item.itemId);
           cart
-              .addItem(item.itemId, double.parse(item.price), item.title,)
+              .addItem(
+                item.itemId,
+                double.parse(item.price),
+                item.title,
+              )
               .then((value) => cart.fetchCartItem());
           Scaffold.of(context).hideCurrentSnackBar();
           Scaffold.of(context).showSnackBar(
@@ -53,4 +60,3 @@ class Item extends StatelessWidget {
     );
   }
 }
-
