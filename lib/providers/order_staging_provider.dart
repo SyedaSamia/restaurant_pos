@@ -54,6 +54,21 @@ class OrderStagingProvider with ChangeNotifier {
     return _totalAmountToPrint;
   }
 
+  String _customerName;
+  String _customerPhone;
+  String _remarks;
+  String get customerName {
+    return _customerName;
+  }
+
+  String get customerPhone {
+    return _customerPhone;
+  }
+
+  String get remarks {
+    return _remarks;
+  }
+
   double _currentDiscountAmount;
   bool _discountPercentage;
 
@@ -82,15 +97,27 @@ class OrderStagingProvider with ChangeNotifier {
     return _currentCheckoutOrdersCount;
   }
 
-  Future<void> findOrder(String id) async {
+  Future<void> findOrder(String id, String customerName, String customerPhone,
+      String remarks) async {
     _currentOrderId = id;
     final dataList =
         await DBHelper.getDataWithId('staging_orders', _currentOrderId, 'id');
     /*  print(
         'length of datalist after pressing checkout: length ${dataList.length} id: ${dataList[0]['id']}');*/
 
+    _customerName = customerName;
+    _customerPhone = customerPhone;
+    _remarks = remarks;
+
+    DBHelper.insert('customer_details', {
+      'order_ref': id,
+      'customer_name': _customerName,
+      'customer_phone': _customerPhone, //only date
+      'remarks': _remarks,
+    });
     var disPercentage;
     double dis;
+
     _currentCheckoutOrdersCount = dataList.length;
     _totalCheckoutAmount = double.parse(dataList[0]['total_amount']);
     _totalCheckoutVat = double.parse(dataList[0]['vat']);

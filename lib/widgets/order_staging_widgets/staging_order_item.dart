@@ -19,8 +19,28 @@ class StagingOrderItem extends StatefulWidget {
 }
 
 class _StagingOrderItemState extends State<StagingOrderItem> {
+  final _formKey = GlobalKey<FormState>();
+
+  final _back = Colors.blue;
+  final _front = Colors.white;
+  InputDecoration _buildInputDecoration(String hint) {
+    return InputDecoration(
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: _back)),
+        hintText: hint,
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: _back)),
+        hintStyle: TextStyle(color: _back),
+        errorStyle: TextStyle(color: _back),
+        errorBorder: UnderlineInputBorder(borderSide: BorderSide(color: _back)),
+        focusedErrorBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: _back)));
+  }
+
   @override
   Widget build(BuildContext context) {
+    var _customerName, _customerPhone, _remarks;
+
     SizeConfig().init(context);
     final stagingOrder = Provider.of<ord.OrderStagingProvider>(context);
     final cart = Provider.of<CartProvider>(context, listen: false);
@@ -49,6 +69,107 @@ class _StagingOrderItemState extends State<StagingOrderItem> {
                   Navigator.of(context).pop();
                 },
               ));
+    }
+
+    Future<dynamic> customerForm(BuildContext ctx) {
+      return showDialog(
+          context: ctx,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Stack(
+                overflow: Overflow.visible,
+                children: <Widget>[
+                  Positioned(
+                    right: -40.0,
+                    top: -40.0,
+                    child: InkResponse(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: CircleAvatar(
+                        child: Icon(Icons.close),
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
+                  ),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          child: Center(
+                            child: Text('Customer Details'),
+                          ),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.all(8),
+                            child: TextFormField(
+                              cursorColor: _back,
+                              keyboardType: TextInputType.name,
+                              decoration:
+                                  _buildInputDecoration('Customer Name'),
+                              /*validator: (value) {
+                                if (value.isEmpty || !value.contains('@')) {
+                                  return 'Invalid email!';
+                                }
+                              },*/
+                              onSaved: (value) {
+                                _customerName = value;
+                              },
+                            )),
+                        Padding(
+                            padding: EdgeInsets.all(8),
+                            child: TextFormField(
+                              cursorColor: _back,
+                              keyboardType: TextInputType.phone,
+                              decoration:
+                                  _buildInputDecoration('Customer Phone'),
+                              /*validator: (value) {
+                                if (value.isEmpty || !value.contains('@')) {
+                                  return 'Invalid email!';
+                                }
+                              },*/
+                              onSaved: (value) {
+                                _customerPhone = value;
+                              },
+                            )),
+                        Padding(
+                            padding: EdgeInsets.all(8),
+                            child: TextFormField(
+                              cursorColor: _back,
+                              keyboardType: TextInputType.name,
+                              decoration: _buildInputDecoration('Remarks'),
+                              /*validator: (value) {
+                                if (value.isEmpty || !value.contains('@')) {
+                                  return 'Invalid email!';
+                                }
+                              },*/
+                              onSaved: (value) {
+                                _remarks = value;
+                              },
+                            )),
+                        Padding(
+                            padding: EdgeInsets.all(8),
+                            child: RaisedButton(
+                              child: Text('Ok'),
+                              onPressed: () {
+                                if (_formKey.currentState.validate()) {
+                                  _formKey.currentState.save();
+                                  stagingOrder.findOrder(widget.order.id,
+                                      _customerName, _customerPhone, _remarks);
+                                  Navigator.of(context)
+                                      .pushReplacementNamed(Checkout.routeName);
+                                }
+                              },
+                            ))
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          });
     }
 
     return Container(
@@ -96,9 +217,7 @@ class _StagingOrderItemState extends State<StagingOrderItem> {
                   RaisedButton(
                     child: Text('Checkout'),
                     onPressed: () {
-                      stagingOrder.findOrder(widget.order.id);
-                      Navigator.of(context)
-                          .pushReplacementNamed(Checkout.routeName);
+                      customerForm(context);
                     },
                   )
                 ],

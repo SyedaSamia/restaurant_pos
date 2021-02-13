@@ -35,6 +35,10 @@ class DBHelper {
   static final _createOrderItemsTable =
       'CREATE TABLE order_items(id TEXT, itemId TEXT, title TEXT, quantity TEXT, price TEXT)';
 
+  //create customer table
+  static final _createCustomerDetailsTable =
+      'CREATE TABLE customer_details(order_ref TEXT PRIMARY KEY, customer_name Text, customer_phone Text, remarks Text)';
+
   static Future<Database> database() async {
     final dbPath = await sql.getDatabasesPath();
     return sql.openDatabase(path.join(dbPath, _dbName),

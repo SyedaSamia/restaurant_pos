@@ -86,6 +86,7 @@ String get token {
         _lastName = extractedData['last_name'];
         _email = extractedData['email'];
         _restaurantId = extractedData['restaurant']['restaurant_id'];
+        _restaurantName = extractedData['restaurant']['restaurant_name'];
       }
 
       /*_expiryDate = DateTime.now().add(
@@ -103,7 +104,8 @@ String get token {
         'first_name': extractedData['first_name'],
         'last_name': extractedData['last_name'],
         'email': extractedData['email'],
-        'restaurant_id': extractedData['restaurant']['restaurant_id']
+        'restaurant_id': extractedData['restaurant']['restaurant_id'],
+        'restaurant_name': extractedData['restaurant']['restaurant_name']
       });
 
       prefs.setString(
@@ -138,6 +140,7 @@ String get token {
     _email = extractedUserData['email'];
     _userId = _token;
     _restaurantId = extractedUserData['restaurant_id'];
+    _restaurantName = extractedUserData['restaurant_name'];
     // _expiryDate = expiryDate;
     notifyListeners();
     //_autoLogout();
@@ -175,5 +178,13 @@ Future<String> getRestaurantId() async {
   final extractedUserData =
       json.decode(prefs.getString('userData')) as Map<String, Object>;
   final _rid = extractedUserData['restaurant_id'];
+  return _rid;
+}
+
+Future<String> getRestaurantName() async {
+  final prefs = await SharedPreferences.getInstance();
+  final extractedUserData =
+      json.decode(prefs.getString('userData')) as Map<String, Object>;
+  final _rid = extractedUserData['restaurant_name'];
   return _rid;
 }

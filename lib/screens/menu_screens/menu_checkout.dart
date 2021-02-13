@@ -1,17 +1,22 @@
+import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
+import 'package:restaurantpos/providers/auth.dart';
 import 'package:restaurantpos/providers/categories_provider.dart';
 import 'package:restaurantpos/providers/checkout_provider.dart';
 import 'package:restaurantpos/providers/order_staging_provider.dart';
 import 'package:restaurantpos/utils/size_config.dart';
 import 'package:restaurantpos/widgets/checkout/checkout_item.dart';
 import 'package:restaurantpos/widgets/main_drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 import '../home.page.dart';
@@ -68,7 +73,10 @@ class Checkout extends StatelessWidget {
                       iQuantityList,
                       cart.totalCheckoutVat,
                       cart.currentDiscountToPrint,
-                      cart.totalCheckoutAmount))
+                      cart.totalCheckoutAmount,
+                      cart.customerName,
+                      cart.customerPhone,
+                      cart.remarks))
               .then((value) {
             cart.clear();
             Fluttertoast.cancel();
@@ -163,8 +171,32 @@ class Checkout extends StatelessWidget {
     );
   }
 
-  Future<void> _createPDF(_length, _itemNameList, _itemPriceList,
-      _itemQuantityList, _totalVat, _discount, _totalAmount) async {
+  /*Future<File> _getImageLogoFile() async {
+    var bytes = await rootBundle.load('assets/logo.jpg');
+    String tempPath = (await getTemporaryDirectory()).path;
+    File file = File('$tempPath/logo.jpg');
+    await file.writeAsBytes(
+        bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+
+    return file;
+  }*/
+
+  Future<void> _createPDF(
+      _length,
+      _itemNameList,
+      _itemPriceList,
+      _itemQuantityList,
+      _totalVat,
+      _discount,
+      _totalAmount,
+      _customerName,
+      _customerPhone,
+      _remarks) async {
+    final prefs = await SharedPreferences.getInstance();
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final _rName = extractedUserData['restaurant_name'];
+
     //Create a PDF document.
     PdfDocument document = PdfDocument();
 
@@ -198,9 +230,33 @@ class Checkout extends StatelessWidget {
       backgroundBrush: PdfBrushes.white,
       textPen: PdfPens.black,
       textBrush: PdfBrushes.white,
-      font: PdfStandardFont(PdfFontFamily.timesRoman, 17),
+      font: PdfStandardFont(PdfFontFamily.helvetica, 12),
     );
+
     final PdfPage page = document.pages.add();
+
+    //Draw text in the header.
+    page.graphics.drawString(
+        '$_rName', PdfStandardFont(PdfFontFamily.helvetica, 18),
+        bounds: const Rect.fromLTWH(0, 3, 0, 0));
+    page.graphics.drawString('Customer Name: $_customerName',
+        PdfStandardFont(PdfFontFamily.helvetica, 13),
+        bounds: const Rect.fromLTWH(0, 27, 200, 20));
+    page.graphics.drawString('Customer Phone: $_customerPhone',
+        PdfStandardFont(PdfFontFamily.helvetica, 13),
+        bounds: const Rect.fromLTWH(0, 47, 200, 20));
+    page.graphics.drawString(
+        'Remarks: $_remarks', PdfStandardFont(PdfFontFamily.helvetica, 13),
+        bounds: const Rect.fromLTWH(0, 67, 0, 0));
+
+    /*  //Read image data.
+    File file1 = _getImageLogoFile() as File;
+    final Uint8List imageData = file1.readAsBytesSync();
+//Load the image using PdfBitmap.
+    final PdfBitmap image = PdfBitmap(imageData);
+//Draw the image to the PDF page.
+    page.graphics.drawImage(image, const Rect.fromLTWH(180, 27, 50, 50));*/
+
     PdfGrid grid = PdfGrid();
     grid.columns.add(count: 5);
     //grid.headers.add(1);
@@ -259,7 +315,7 @@ class Checkout extends StatelessWidget {
     var _bounds = const Rect.fromLTWH(0, 0, 0, 0);
     grid.draw(page: page, bounds: _bounds);*/
 
-    grid.draw(page: page, bounds: const Rect.fromLTWH(0, 40, 0, 0));
+    grid.draw(page: page, bounds: const Rect.fromLTWH(0, 87, 0, 0));
 
     /**
      *

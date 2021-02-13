@@ -159,6 +159,8 @@ class CheckoutProvider with ChangeNotifier {
     //var newFormat = DateFormat("dd-MM-yyyy hh:mm a");
 
     _orders.map((e) async {
+      final dataList =
+          await DBHelper.getDataWithId('customer_details', e.orderRef, 'id');
       var dateTime = DateTime.now();
       var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
       var request = http.Request(
@@ -196,7 +198,10 @@ class CheckoutProvider with ChangeNotifier {
         'discount_amount': '${e.discount}',
         'vat': e.vat == null ? '0.0' : '${e.vat}',
         'discount_code': '',
-        'order_date': '${e.orderDate}'
+        'order_date': '${e.orderDate}',
+        /* 'customer_name':dataList[0]['total_amount'],
+        'customer_phone':dataList[0]['total_amount'],
+        'remarks':dataList[0]['total_amount']*/
       };
       request.headers.addAll(headers);
 
@@ -211,6 +216,7 @@ class CheckoutProvider with ChangeNotifier {
     _orders.clear();
     DBHelper.removeAllRows('orders');
     DBHelper.removeAllRows('order_items');
+    DBHelper.removeAllRows('customer_details');
     notifyListeners();
   }
 }

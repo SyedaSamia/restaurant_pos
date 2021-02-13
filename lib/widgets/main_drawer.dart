@@ -27,19 +27,22 @@ class MainDrawer extends StatelessWidget {
             left: 16,
             child: Container(
               // color: Colors.black,
-              decoration: BoxDecoration(
+              /*decoration: BoxDecoration(
                 //   backgroundBlendMode: BlendMode.color,
                 shape: BoxShape.rectangle,
                 border: Border.all(color: Colors.white),
-              ),
+              ),*/
               height: 70,
-              width: 200,
+              // width: 200,
               child: Center(
                 child: Text(
-                  'Restaurant Logo',
-                  textAlign: TextAlign.center,
+                  '${user.restaurantName}',
+                  // textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.black38),
+                      fontSize: 22,
+                      fontFamily: 'RobotoCondensed',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ),
             ),
@@ -51,8 +54,8 @@ class MainDrawer extends StatelessWidget {
                   ? Text('Waiter Name')
                   : Text("${user.userFirstName} ${user.userLastName}",
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28.0,
+                          color: Colors.amber[300],
+                          fontSize: 22.0,
                           fontWeight: FontWeight.w500))),
           Positioned(
               bottom: 15.0,
@@ -61,8 +64,8 @@ class MainDrawer extends StatelessWidget {
                   ? Text('email@email.com')
                   : Text("${user.userEmail}",
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                          color: Colors.yellow[300],
+                          fontSize: 12,
                           fontWeight: FontWeight.w500))),
         ]));
     Widget buildListTile(String title, Function tapHandler) {
